@@ -11,6 +11,8 @@ import {
   Wallet,
 } from 'lucide-react'
 
+import { SidebarLogoutButton } from '#/components/SidebarLogoutButton'
+
 const nav = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/app/agenda', label: 'Agenda', icon: Calendar },
@@ -35,7 +37,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen bg-[var(--page-bg)] pb-20 text-[var(--sea-ink)] md:pb-6">
       <div className="mx-auto flex max-w-7xl gap-6 px-4 py-5 md:py-6">
-        <aside className="app-sidebar hidden w-60 shrink-0 overflow-hidden md:block">
+        <aside className="app-sidebar hidden w-60 shrink-0 flex-col overflow-hidden md:flex">
           {/* Brand section */}
           <div className="flex items-center gap-2.5 border-b border-[var(--line)] px-4 py-4">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white shadow-sm">
@@ -85,6 +87,10 @@ export function AppShell() {
                 </Link>
               )
             })}
+          </div>
+
+          <div className="mt-auto border-t border-[var(--line)] p-2">
+            <SidebarLogoutButton />
           </div>
         </aside>
 

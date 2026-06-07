@@ -860,6 +860,23 @@ export const deleteClientDataFn = createServerFn({ method: 'POST' })
     return deleteClientData(ctx.organizationId, data.clientId)
   })
 
+export const getPublicBookingLinkFn = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const ctx = await tenantFromContext()
+    const settings = await db.query.organizationSettings.findFirst({
+      where: eq(organizationSettings.organizationId, ctx.organizationId),
+    })
+    const bookingPath = `/book/${ctx.organization.publicSlug}`
+
+    return {
+      organizationName: ctx.organization.name,
+      publicSlug: ctx.organization.publicSlug,
+      bookingPath,
+      bookingEnabled: settings?.bookingEnabled ?? true,
+    }
+  },
+)
+
 export const seedDemoFn = createServerFn({ method: 'POST' }).handler(
   async () => {
     if (process.env.NODE_ENV === 'production') {

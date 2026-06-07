@@ -1,11 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import {
+  CalendarDays,
+  Check,
+  Copy,
   Database,
   Download,
+  ExternalLink,
   FlaskConical,
   LogOut,
   Search,
+  Settings,
   Shield,
   Trash2,
   User,
@@ -17,25 +22,38 @@ import { authClient } from '#/lib/auth-client'
 import {
   deleteClientDataFn,
   exportClientDataFn,
+  getPublicBookingLinkFn,
   listClientsFn,
   seedDemoFn,
 } from '#/server/fns/app'
 
 export const Route = createFileRoute('/app/configuracoes')({
-  loader: async () => listClientsFn({ data: {} }),
+  loader: async () => {
+    const [clients, bookingLink] = await Promise.all([
+      listClientsFn({ data: {} }),
+      getPublicBookingLinkFn(),
+    ])
+    return { clients, bookingLink }
+  },
   component: ConfiguracoesPage,
 })
 
 function ConfiguracoesPage() {
-  const clients = Route.useLoaderData()
+  const { clients, bookingLink } = Route.useLoaderData()
   const exportClient = useServerFn(exportClientDataFn)
   const deleteClient = useServerFn(deleteClientDataFn)
   const seedDemo = useServerFn(seedDemoFn)
   const [q, setQ] = useState('')
+  const [copied, setCopied] = useState(false)
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'danger'
     message: string
   } | null>(null)
+
+  const bookingUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${bookingLink.bookingPath}`
+      : bookingLink.bookingPath
 
   const filteredClients = useMemo(() => {
     const query = q.trim().toLowerCase()
@@ -54,11 +72,13 @@ function ConfiguracoesPage() {
     <section className="island-shell rounded-2xl p-5 sm:p-6">
       <PageHeader
         title="Configurações"
-        description="Conta, LGPD, demo e preferências."
+        description="Link público, privacidade e conta."
+        icon={Settings}
       />
 
       <div className="mb-5 flex flex-wrap gap-2">
         <StatChip label="Clientes" value={String(clients.length)} />
+        <StatChip label="Slug" value={bookingLink.publicSlug} />
         {import.meta.env.DEV && (
           <StatChip label="Ambiente" value="Desenvolvimento" active />
         )}
@@ -76,8 +96,78 @@ function ConfiguracoesPage() {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-5">
-        <div className="xl:col-span-3">
+      <div className="mb-6 rounded-2xl border border-[var(--lagoon-deep)]/20 bg-[var(--accent-soft)]/40 p-4 sm:p-5">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--lagoon-deep)] shadow-sm">
+              <CalendarDays size={20} />
+            </span>
+            <div>
+              <h2 className="text-sm font-bold text-[var(--sea-ink)]">
+                Link de agendamento
+              </h2>
+              <p className="mt-0.5 text-xs text-[var(--sea-ink-soft)]">
+                Compartilhe com clientes para agendar online, 24h por dia.
+              </p>
+            </div>
+          </div>
+          <span className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-3 py-1 text-xs font-semibold text-[var(--sea-ink)]">
+            {bookingLink.organizationName}
+          </span>
+        </div>
+
+        <div className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-3 sm:p-4">
+          <p className="mb-1.5 text-[0.65rem] font-bold uppercase tracking-wide text-[var(--sea-ink-soft)]">
+            URL pública
+          </p>
+          <p
+            className="mb-3 truncate font-mono text-sm text-[var(--sea-ink)]"
+            title={bookingUrl}
+          >
+            {bookingUrl}
+          </p>
+          <p className="mb-4 text-xs text-[var(--sea-ink-soft)]">
+            Caminho:{' '}
+            <code className="text-[var(--lagoon-deep)]">
+              {bookingLink.bookingPath}
+            </code>
+          </p>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              className="btn-primary flex-1"
+              onClick={async () => {
+                await navigator.clipboard.writeText(bookingUrl)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+              }}
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? 'Link copiado' : 'Copiar link'}
+            </button>
+            <a
+              className="btn-secondary flex-1 no-underline"
+              href={bookingLink.bookingPath}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={16} />
+              Visualizar página
+            </a>
+          </div>
+        </div>
+
+        {!bookingLink.bookingEnabled && (
+          <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            O agendamento online está desativado. Clientes verão uma mensagem ao
+            acessar o link.
+          </p>
+        )}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           <Panel
             icon={Shield}
             title="LGPD — dados do cliente"
@@ -185,10 +275,34 @@ function ConfiguracoesPage() {
                 ))}
               </ul>
             )}
+
+            <p className="mt-4 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-xs leading-relaxed text-[var(--sea-ink-soft)]">
+              A exportação LGPD gera um JSON com dados pessoais, notas,
+              agendamentos e registros clínicos do cliente. A exclusão é
+              permanente e irreversível.
+            </p>
           </Panel>
         </div>
 
-        <div className="flex flex-col gap-4 xl:col-span-2">
+        <div className="flex flex-col gap-4">
+          <Panel
+            icon={LogOut}
+            title="Sessão"
+            subtitle="Encerre sua sessão neste dispositivo."
+          >
+            <button
+              type="button"
+              className="btn-secondary w-full"
+              onClick={async () => {
+                await authClient.signOut()
+                window.location.href = '/'
+              }}
+            >
+              <LogOut size={16} />
+              Sair da conta
+            </button>
+          </Panel>
+
           {import.meta.env.DEV && (
             <Panel
               icon={FlaskConical}
@@ -215,32 +329,6 @@ function ConfiguracoesPage() {
               </button>
             </Panel>
           )}
-
-          <Panel
-            icon={LogOut}
-            title="Sessão"
-            subtitle="Encerre sua sessão neste dispositivo."
-          >
-            <button
-              type="button"
-              className="btn-primary w-full"
-              onClick={async () => {
-                await authClient.signOut()
-                window.location.href = '/'
-              }}
-            >
-              <LogOut size={16} />
-              Sair
-            </button>
-          </Panel>
-
-          <div className="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3">
-            <p className="text-xs leading-relaxed text-[var(--sea-ink-soft)]">
-              A exportação LGPD gera um JSON com dados pessoais, notas,
-              agendamentos e registros clínicos do cliente. A exclusão é
-              permanente e irreversível.
-            </p>
-          </div>
         </div>
       </div>
     </section>

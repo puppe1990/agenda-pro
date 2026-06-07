@@ -4,6 +4,8 @@ import { and, desc, eq, like, or } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { createId } from '#/lib/id'
+import { assertPublicBookingRateLimit, resolveClientIp } from '#/lib/rate-limit'
+import { captureException } from '#/lib/observability'
 import { db } from '#/server/db/client'
 import {
   anamnesisForms,
@@ -578,6 +580,7 @@ export const generateReceiptFn = createServerFn({ method: 'POST' })
       orgName: ctx.organization.name,
       amountCents: data.amountCents,
       description: data.description,
+      logoUrl: ctx.organization.logoUrl,
     })
   })
 
@@ -668,6 +671,17 @@ export const publicBookFn = createServerFn({ method: 'POST' })
     }),
   )
   .handler(async ({ data }) => {
+    try {
+      const request = getRequest()
+      const ip = resolveClientIp(request.headers)
+      await assertPublicBookingRateLimit(`public-book:${data.slug}:${ip}`)
+    } catch (error) {
+      if (error instanceof Error && error.message === 'RATE_LIMITED') {
+        throw error
+      }
+      captureException(error, { scope: 'publicBookFn.rateLimit' })
+    }
+
     const org = await db.query.organizations.findFirst({
       where: eq(organizations.publicSlug, data.slug),
     })

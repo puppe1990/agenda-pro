@@ -226,14 +226,23 @@ export async function generateReceipt(input: {
   orgName: string
   amountCents: number
   description: string
+  logoUrl?: string | null
 }) {
+  const { buildReceiptPdf } = await import('#/server/services/receipt-pdf')
   const html = `<html><body><h1>Recibo - ${input.orgName}</h1><p>${input.description}</p><p>Valor: R$ ${(input.amountCents / 100).toFixed(2)}</p></body></html>`
+  const contentPdfBase64 = await buildReceiptPdf({
+    orgName: input.orgName,
+    description: input.description,
+    amountCents: input.amountCents,
+    logoUrl: input.logoUrl,
+  })
   const id = createId()
   await db.insert(receipts).values({
     id,
     organizationId: input.organizationId,
     transactionId: input.transactionId,
     contentHtml: html,
+    contentPdfBase64,
   })
-  return { id, html }
+  return { id, html, pdfBase64: contentPdfBase64 }
 }

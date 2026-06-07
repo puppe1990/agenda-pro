@@ -49,7 +49,7 @@ function HeroVisual() {
             className="hero-preview-dot"
             style={{ background: '#34d399' }}
           />
-          <span className="hero-preview-title">Agenda Bem · Hoje</span>
+          <span className="hero-preview-title">Gestão Bem · Hoje</span>
         </div>
         <div className="hero-preview-body">
           <div className="hero-slot hero-slot-booked">
@@ -159,7 +159,7 @@ function LandingPage() {
             Tudo que seu negócio precisa no dia a dia
           </h2>
           <p className="landing-section-lead">
-            Do primeiro agendamento ao fechamento do mês, o Agenda Bem conecta
+            Do primeiro agendamento ao fechamento do mês, o Gestão Bem conecta
             operação, clientes e financeiro em um fluxo simples.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -213,7 +213,7 @@ function LandingPage() {
           <h2 className="landing-section-title">Quem usa, recomenda</h2>
           <p className="landing-section-lead">
             Negócios de diferentes segmentos já simplificaram agenda,
-            atendimento e controle financeiro com o Agenda Bem.
+            atendimento e controle financeiro com o Gestão Bem.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {LANDING_TESTIMONIALS.map((item, idx) => (

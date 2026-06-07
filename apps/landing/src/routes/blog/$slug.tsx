@@ -22,7 +22,7 @@ export const Route = createFileRoute('/blog/$slug')({
 
     return {
       meta: [
-        { title: `${post.title} | Agenda Bem` },
+        { title: `${post.title} | Gestão Bem` },
         { name: 'description', content: post.description },
       ],
     }

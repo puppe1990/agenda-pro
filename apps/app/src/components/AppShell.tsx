@@ -112,11 +112,11 @@ export function AppShell() {
           {/* Brand section */}
           <div className="flex items-center gap-2.5 border-b border-[var(--line)] px-4 py-4">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white shadow-sm">
-              AB
+              GB
             </span>
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-[var(--sea-ink)]">
-                Agenda Bem
+                Gestão Bem
               </p>
               <p className="text-[0.65rem] font-medium text-[var(--sea-ink-soft)]">
                 Painel operacional

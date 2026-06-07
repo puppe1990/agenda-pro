@@ -50,8 +50,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     <div className="auth-layout">
       <div className="auth-panel">
         <div className="auth-brand">
-          <div className="auth-brand-mark">AB</div>
-          <p className="island-kicker">Agenda Bem</p>
+          <div className="auth-brand-mark">GB</div>
+          <p className="island-kicker">Gestão Bem</p>
         </div>
         <form
           onSubmit={onSubmit}

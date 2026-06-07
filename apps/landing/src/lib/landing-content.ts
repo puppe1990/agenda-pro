@@ -157,13 +157,13 @@ export const WHATSAPP_BUTTONS: WhatsAppButton[] = [
   {
     id: 'suporte',
     label: 'Suporte',
-    message: 'Olá! Preciso de ajuda com o Agenda Bem.',
+    message: 'Olá! Preciso de ajuda com o Gestão Bem.',
     ariaLabel: 'Falar com suporte pelo WhatsApp',
   },
   {
     id: 'vendas',
     label: 'Demonstração',
-    message: 'Olá! Gostaria de agendar uma demonstração do Agenda Bem.',
+    message: 'Olá! Gostaria de agendar uma demonstração do Gestão Bem.',
     ariaLabel: 'Agendar demonstração pelo WhatsApp',
   },
 ]
@@ -200,7 +200,7 @@ export function getWhatsAppLinks(
 
 export function getLandingMeta() {
   return {
-    title: 'Agenda Bem',
+    title: 'Gestão Bem',
     description:
       'Agenda, CRM e financeiro para salões, clínicas e consultórios.',
     kicker: 'Para salões, clínicas e consultórios',

@@ -21,7 +21,7 @@ export function captureException(
     Sentry.captureException(error, { extra: context })
     return
   }
-  console.error('[agenda-bem]', context, error)
+  console.error('[gestao-bem]', context, error)
 }
 
 export function captureMessage(
@@ -33,5 +33,5 @@ export function captureMessage(
     Sentry.captureMessage(message, { extra: context })
     return
   }
-  console.info('[agenda-bem]', context, message)
+  console.info('[gestao-bem]', context, message)
 }

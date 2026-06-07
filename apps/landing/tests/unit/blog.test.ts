@@ -20,7 +20,7 @@ const samplePosts: BlogPostMeta[] = [
     title: 'Como organizar o financeiro do salão',
     description: 'Dicas práticas para controlar receitas e despesas.',
     publishedAt: '2026-03-15',
-    author: 'Equipe Agenda Bem',
+    author: 'Equipe Gestão Bem',
     tags: ['financeiro', 'salão'],
   },
   {
@@ -28,7 +28,7 @@ const samplePosts: BlogPostMeta[] = [
     title: '5 formas de reduzir faltas na agenda',
     description: 'Confirmações e lembretes que funcionam no dia a dia.',
     publishedAt: '2026-05-20',
-    author: 'Equipe Agenda Bem',
+    author: 'Equipe Gestão Bem',
     tags: ['agenda', 'whatsapp'],
   },
   {
@@ -36,7 +36,7 @@ const samplePosts: BlogPostMeta[] = [
     title: 'Portal de agendamento para clientes',
     description: 'Deixe seus clientes marcarem horário 24h por dia.',
     publishedAt: '2026-01-10',
-    author: 'Equipe Agenda Bem',
+    author: 'Equipe Gestão Bem',
     tags: ['agenda'],
   },
 ]
@@ -82,7 +82,7 @@ slug: reduzir-faltas
 title: 5 formas de reduzir faltas na agenda
 description: Confirmações e lembretes que funcionam no dia a dia.
 publishedAt: 2026-05-20
-author: Equipe Agenda Bem
+author: Equipe Gestão Bem
 tags:
   - agenda
   - whatsapp
@@ -98,7 +98,7 @@ Menos faltas começam com confirmação.`
       title: '5 formas de reduzir faltas na agenda',
       description: 'Confirmações e lembretes que funcionam no dia a dia.',
       publishedAt: '2026-05-20',
-      author: 'Equipe Agenda Bem',
+      author: 'Equipe Gestão Bem',
       tags: ['agenda', 'whatsapp'],
     })
     expect(parsed.content).toContain('## Introdução')

@@ -17,6 +17,10 @@ applications:
             - env | grep -e '^BETTER_AUTH_SECRET=' >> apps/app/.env.production
             - env | grep -e '^BETTER_AUTH_URL=' >> apps/app/.env.production
             - env | grep -e '^CRON_SECRET=' >> apps/app/.env.production
+            - env | grep -e '^S3_REGION=' >> apps/app/.env.production
+            - env | grep -e '^S3_ACCESS_KEY_ID=' >> apps/app/.env.production
+            - env | grep -e '^S3_SECRET_ACCESS_KEY=' >> apps/app/.env.production
+            - env | grep -e '^S3_BUCKET=' >> apps/app/.env.production
             - pnpm --filter @agenda-pro/app db:push
             - pnpm --filter @agenda-pro/app build
             - mkdir -p apps/app/.amplify-hosting/compute/default/node_modules

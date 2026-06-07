@@ -18,7 +18,9 @@ test.describe('authenticated flows', () => {
     request,
     baseURL,
   }) => {
-    const clientName = `Cliente E2E ${Date.now()}`
+    const runId = Date.now()
+    const clientName = `Cliente E2E ${runId}`
+    const serviceName = `Consulta E2E ${runId}`
 
     await signInWithApi(baseURL!, request, page, E2E_EMAIL, E2E_PASSWORD)
     await page.goto('/app/dashboard')
@@ -27,9 +29,9 @@ test.describe('authenticated flows', () => {
 
     await page.goto('/app/servicos')
     await waitForAppReady(page)
-    await page.getByPlaceholder('Nome do serviço').fill('Consulta E2E')
+    await page.getByPlaceholder('Nome do serviço').fill(serviceName)
     await page.getByRole('button', { name: 'Adicionar serviço' }).click()
-    await expect(page.getByText('Consulta E2E')).toBeVisible()
+    await expect(page.getByText(serviceName)).toBeVisible()
 
     await page.goto('/app/clientes')
     await waitForAppReady(page)
@@ -49,7 +51,7 @@ test.describe('authenticated flows', () => {
     await waitForAppReady(page)
     const appointmentDate = localDateString()
     await page.locator('select').nth(0).selectOption({ label: clientName })
-    await page.locator('select').nth(1).selectOption({ label: 'Consulta E2E' })
+    await page.locator('select').nth(1).selectOption({ label: serviceName })
     await page
       .locator('select')
       .nth(2)
@@ -69,6 +71,6 @@ test.describe('authenticated flows', () => {
       hasText: clientName,
     })
     await expect(appointment).toBeVisible()
-    await expect(appointment).toContainText('scheduled')
+    await expect(appointment).toContainText('Agendado')
   })
 })

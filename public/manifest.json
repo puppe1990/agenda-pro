@@ -4,8 +4,8 @@
   "description": "Agenda, CRM e financeiro para pequenos negócios",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4f7f5",
-  "theme_color": "#2f6a4a",
+  "background_color": "#fff0ec",
+  "theme_color": "#be123c",
   "lang": "pt-BR",
   "icons": [
     {

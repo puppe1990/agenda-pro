@@ -28,9 +28,9 @@ import {
 } from '#/server/fns/app'
 
 const CHART_COLORS = {
-  Receita: '#0f766e',
+  Receita: '#be123c',
   Despesas: '#d97706',
-  Lucro: '#166534',
+  Lucro: '#9f1239',
 } as const
 
 const STATUS_LABELS: Record<string, string> = {
@@ -44,7 +44,7 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
   scheduled: '#64748b',
   confirmed: '#0ea5e9',
-  completed: '#0f766e',
+  completed: '#be123c',
   cancelled: '#94a3b8',
   no_show: '#dc2626',
 }

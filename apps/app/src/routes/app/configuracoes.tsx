@@ -8,7 +8,6 @@ import {
   Download,
   ExternalLink,
   FlaskConical,
-  LogOut,
   Search,
   Settings,
   Shield,
@@ -18,7 +17,6 @@ import {
 import { useMemo, useState } from 'react'
 
 import { PageHeader } from '#/components/PageHeader'
-import { authClient } from '#/lib/auth-client'
 import {
   deleteClientDataFn,
   exportClientDataFn,
@@ -166,8 +164,10 @@ function ConfiguracoesPage() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      <div
+        className={`grid gap-6 ${import.meta.env.DEV ? 'lg:grid-cols-3' : 'grid-cols-1'}`}
+      >
+        <div className={import.meta.env.DEV ? 'lg:col-span-2' : undefined}>
           <Panel
             icon={Shield}
             title="LGPD — dados do cliente"
@@ -284,26 +284,8 @@ function ConfiguracoesPage() {
           </Panel>
         </div>
 
-        <div className="flex flex-col gap-4">
-          <Panel
-            icon={LogOut}
-            title="Sessão"
-            subtitle="Encerre sua sessão neste dispositivo."
-          >
-            <button
-              type="button"
-              className="btn-secondary w-full"
-              onClick={async () => {
-                await authClient.signOut()
-                window.location.href = '/'
-              }}
-            >
-              <LogOut size={16} />
-              Sair da conta
-            </button>
-          </Panel>
-
-          {import.meta.env.DEV && (
+        {import.meta.env.DEV && (
+          <div className="flex flex-col gap-4">
             <Panel
               icon={FlaskConical}
               title="Ambiente de demo"
@@ -328,8 +310,8 @@ function ConfiguracoesPage() {
                 Seed studio-demo
               </button>
             </Panel>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   )

@@ -300,6 +300,28 @@ export const listStaffFn = createServerFn({ method: 'GET' }).handler(
   },
 )
 
+export const createStaffFn = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      displayName: z.string().min(1),
+      commissionPercent: z.number().int().min(0).max(100).default(0),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin'])
+    const id = createId()
+    await db.insert(staffProfiles).values({
+      id,
+      organizationId: ctx.organizationId,
+      userId: ctx.userId,
+      displayName: data.displayName,
+      commissionPercent: data.commissionPercent,
+      active: true,
+    })
+    return id
+  })
+
 export const saveStaffFn = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
@@ -853,6 +875,19 @@ export const saveAvailabilityFn = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const ctx = await tenantFromContext()
+    const rulesForDay = await db.query.availabilityRules.findMany({
+      where: and(
+        eq(availabilityRules.organizationId, ctx.organizationId),
+        eq(availabilityRules.staffProfileId, data.staffProfileId),
+        eq(availabilityRules.dayOfWeek, data.dayOfWeek),
+      ),
+    })
+    const overlaps = rulesForDay.some(
+      (r) => data.startTime < r.endTime && r.startTime < data.endTime,
+    )
+    if (overlaps) {
+      throw new Error('OVERLAPPING_AVAILABILITY')
+    }
     const id = createId()
     await db.insert(availabilityRules).values({
       id,
@@ -873,6 +908,57 @@ export const listAvailabilityFn = createServerFn({ method: 'GET' }).handler(
     })
   },
 )
+
+export const replaceAvailabilityFn = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      staffProfileId: z.string(),
+      rules: z.array(
+        z.object({
+          dayOfWeek: z.number().int().min(0).max(6),
+          startTime: z.string(),
+          endTime: z.string(),
+        }),
+      ),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    await db
+      .delete(availabilityRules)
+      .where(
+        and(
+          eq(availabilityRules.organizationId, ctx.organizationId),
+          eq(availabilityRules.staffProfileId, data.staffProfileId),
+        ),
+      )
+    if (data.rules.length > 0) {
+      await db.insert(availabilityRules).values(
+        data.rules.map((r) => ({
+          id: createId(),
+          organizationId: ctx.organizationId,
+          staffProfileId: data.staffProfileId,
+          dayOfWeek: r.dayOfWeek,
+          startTime: r.startTime,
+          endTime: r.endTime,
+        })),
+      )
+    }
+  })
+
+export const deleteAvailabilityFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    await db
+      .delete(availabilityRules)
+      .where(
+        and(
+          eq(availabilityRules.id, data.id),
+          eq(availabilityRules.organizationId, ctx.organizationId),
+        ),
+      )
+  })
 
 export const blockAvailabilityFn = createServerFn({ method: 'POST' })
   .inputValidator(

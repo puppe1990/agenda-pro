@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Toaster } from 'sonner'
 
 import { registerServiceWorker } from '#/lib/pwa'
 
@@ -62,6 +63,7 @@ function RootComponent() {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere]">
         <Outlet />
+        <Toaster position="bottom-right" richColors closeButton />
         <TanStackDevtools
           config={{ position: 'bottom-right' }}
           plugins={[

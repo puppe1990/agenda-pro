@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import {
   Calendar,
@@ -12,6 +13,75 @@ import {
 } from 'lucide-react'
 
 import { SidebarLogoutButton } from '#/components/SidebarLogoutButton'
+
+function RouteProgressBar() {
+  const isLoading = useRouterState({ select: (s) => s.isLoading })
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const hideRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const progressRef = useRef(0)
+
+  useEffect(() => {
+    const wrap = wrapRef.current
+    const bar = barRef.current
+    if (!wrap || !bar) return
+
+    if (isLoading) {
+      if (hideRef.current) clearTimeout(hideRef.current)
+      progressRef.current = 0
+      wrap.style.opacity = '1'
+      wrap.style.display = 'block'
+      bar.style.transition = 'none'
+      bar.style.width = '0%'
+
+      intervalRef.current = setInterval(() => {
+        if (progressRef.current >= 85) return
+        progressRef.current = Math.min(
+          progressRef.current + Math.random() * 10 + 5,
+          85,
+        )
+        bar.style.transition = 'width 0.15s ease-out'
+        bar.style.width = `${progressRef.current}%`
+      }, 150)
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      bar.style.transition = 'width 0.2s ease-out'
+      bar.style.width = '100%'
+      wrap.style.transition = 'opacity 0.25s ease 0.15s'
+      wrap.style.opacity = '0'
+      hideRef.current = setTimeout(() => {
+        wrap.style.display = 'none'
+        wrap.style.transition = ''
+        progressRef.current = 0
+      }, 450)
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (hideRef.current) clearTimeout(hideRef.current)
+    }
+  }, [isLoading])
+
+  return (
+    <div
+      ref={wrapRef}
+      style={{ display: 'none' }}
+      className="pointer-events-none fixed inset-x-0 top-0 z-[9999] h-[3px]"
+      aria-hidden="true"
+    >
+      <div
+        ref={barRef}
+        className="h-full rounded-r-full shadow-[0_0_8px_var(--lagoon)]"
+        style={{
+          width: '0%',
+          background:
+            'linear-gradient(90deg, var(--lagoon-deep), var(--lagoon))',
+        }}
+      />
+    </div>
+  )
+}
 
 const nav = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -36,6 +106,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-[var(--page-bg)] pb-20 text-[var(--sea-ink)] md:pb-6">
+      <RouteProgressBar />
       <div className="mx-auto flex max-w-7xl gap-6 px-4 py-5 md:py-6">
         <aside className="app-sidebar hidden w-60 shrink-0 flex-col overflow-hidden md:flex">
           {/* Brand section */}

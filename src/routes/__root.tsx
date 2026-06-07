@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   HeadContent,
   Outlet,
@@ -6,6 +7,8 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+
+import { registerServiceWorker } from '#/lib/pwa'
 
 import appCss from '../styles.css?url'
 
@@ -32,6 +35,10 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  useEffect(() => {
+    registerServiceWorker()
+  }, [])
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>

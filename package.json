@@ -26,6 +26,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
+    "db:seed": "tsx scripts/seed-demo.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -74,6 +75,7 @@
     "jsdom": "^28.1.0",
     "lint-staged": "^17.0.7",
     "prettier": "^3.8.3",
+    "tsx": "^4.22.3",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.60.1",
     "vite": "^8.0.0",

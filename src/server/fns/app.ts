@@ -17,17 +17,21 @@ import {
   financialGoals,
   messageTemplates,
   notificationQueue,
+  organizationSettings,
   organizations,
   services,
   staffProfiles,
   transactions,
 } from '#/server/db/schema'
-import { requireTenantContext } from '#/server/middleware/tenant'
+import { seedDemoOrganization } from '#/server/db/seed'
+import { assertRole, requireTenantContext } from '#/server/middleware/tenant'
 import {
+  cancelAppointment,
   createAppointment,
   markNoShow,
   rescheduleAppointment,
 } from '#/server/services/appointments'
+import { deleteClientData, exportClientData } from '#/server/services/lgpd'
 import {
   calculateCommission,
   closeCashSession,
@@ -222,6 +226,16 @@ export const markNoShowFn = createServerFn({ method: 'POST' })
     })
   })
 
+export const cancelAppointmentFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ appointmentId: z.string() }))
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    await cancelAppointment({
+      organizationId: ctx.organizationId,
+      appointmentId: data.appointmentId,
+    })
+  })
+
 export const listStaffFn = createServerFn({ method: 'GET' }).handler(
   async () => {
     const ctx = await tenantFromContext()
@@ -242,6 +256,7 @@ export const saveStaffFn = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin'])
     await db
       .update(staffProfiles)
       .set({
@@ -279,6 +294,7 @@ export const saveTransactionFn = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin', 'receptionist'])
     const id = await recordTransaction({
       organizationId: ctx.organizationId,
       description: data.description,
@@ -319,6 +335,7 @@ export const saveExpenseFn = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin'])
     return recordExpense({
       organizationId: ctx.organizationId,
       ...data,
@@ -656,6 +673,13 @@ export const publicBookFn = createServerFn({ method: 'POST' })
     })
     if (!org) throw new Error('NOT_FOUND')
 
+    const settings = await db.query.organizationSettings.findFirst({
+      where: eq(organizationSettings.organizationId, org.id),
+    })
+    if (settings && !settings.bookingEnabled) {
+      throw new Error('BOOKING_DISABLED')
+    }
+
     const service = await db.query.services.findFirst({
       where: and(
         eq(services.id, data.serviceId),
@@ -792,5 +816,31 @@ export const listGoalsFn = createServerFn({ method: 'GET' }).handler(
     return db.query.financialGoals.findMany({
       where: eq(financialGoals.organizationId, ctx.organizationId),
     })
+  },
+)
+
+export const exportClientDataFn = createServerFn({ method: 'GET' })
+  .inputValidator(z.object({ clientId: z.string() }))
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin'])
+    return exportClientData(ctx.organizationId, data.clientId)
+  })
+
+export const deleteClientDataFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ clientId: z.string() }))
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+    assertRole(ctx, ['owner', 'admin'])
+    return deleteClientData(ctx.organizationId, data.clientId)
+  })
+
+export const seedDemoFn = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FORBIDDEN')
+    }
+    const orgId = await seedDemoOrganization()
+    return { orgId, bookingPath: '/book/studio-demo' }
   },
 )

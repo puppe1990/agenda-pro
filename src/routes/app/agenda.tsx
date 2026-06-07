@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { PageHeader } from '#/components/PageHeader'
 import {
+  cancelAppointmentFn,
   createAppointmentFn,
   listAppointmentsFn,
   listClientsFn,
@@ -31,6 +32,7 @@ function AgendaPage() {
   const createAppointment = useServerFn(createAppointmentFn)
   const reschedule = useServerFn(rescheduleAppointmentFn)
   const markNoShow = useServerFn(markNoShowFn)
+  const cancelAppointment = useServerFn(cancelAppointmentFn)
   const [form, setForm] = useState({
     clientId: '',
     serviceId: '',
@@ -165,6 +167,18 @@ function AgendaPage() {
                 }}
               >
                 Falta
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border px-2 py-1"
+                onClick={async () => {
+                  await cancelAppointment({
+                    data: { appointmentId: item.id },
+                  })
+                  window.location.reload()
+                }}
+              >
+                Cancelar
               </button>
             </div>
           </li>

@@ -2,6 +2,8 @@
 
 SaaS de agenda, CRM e financeiro inspirado no MinhaAgenda.
 
+Repositório: https://github.com/puppe1990/agenda-pro
+
 ## Stack
 
 - TanStack Start
@@ -15,8 +17,11 @@ SaaS de agenda, CRM e financeiro inspirado no MinhaAgenda.
 cp .env.example .env
 pnpm install
 pnpm db:push
+pnpm db:seed
 pnpm dev
 ```
+
+Portal demo (após seed): http://localhost:3000/book/studio-demo
 
 ## Qualidade
 

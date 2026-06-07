@@ -27,7 +27,6 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -40,4 +39,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm build
-      - run: pnpm test:e2e:smoke
+      - run: pnpm test:e2e
+        env:
+          TURSO_DATABASE_URL: file:e2e.db
+          BETTER_AUTH_SECRET: ci-better-auth-secret-long-enough-for-tests

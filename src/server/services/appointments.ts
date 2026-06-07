@@ -171,3 +171,32 @@ export async function markNoShow(input: {
     toStatus: 'no_show',
   })
 }
+
+export async function cancelAppointment(input: {
+  organizationId: string
+  appointmentId: string
+}) {
+  const existing = await db.query.appointments.findFirst({
+    where: and(
+      eq(appointments.id, input.appointmentId),
+      eq(appointments.organizationId, input.organizationId),
+    ),
+  })
+
+  if (!existing) {
+    throw new Error('NOT_FOUND')
+  }
+
+  await db
+    .update(appointments)
+    .set({ status: 'cancelled', updatedAt: new Date().toISOString() })
+    .where(eq(appointments.id, input.appointmentId))
+
+  await db.insert(appointmentStatusHistory).values({
+    id: createId(),
+    organizationId: input.organizationId,
+    appointmentId: input.appointmentId,
+    fromStatus: existing.status,
+    toStatus: 'cancelled',
+  })
+}

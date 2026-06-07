@@ -25,6 +25,7 @@ import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes
 import { Route as AppClientesRouteImport } from './routes/app/clientes'
 import { Route as AppAnamneseRouteImport } from './routes/app/anamnese'
 import { Route as AppAgendaRouteImport } from './routes/app/agenda'
+import { Route as ApiCronNotificationsRouteImport } from './routes/api/cron/notifications'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const SignupRoute = SignupRouteImport.update({
@@ -107,6 +108,11 @@ const AppAgendaRoute = AppAgendaRouteImport.update({
   path: '/agenda',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const ApiCronNotificationsRoute = ApiCronNotificationsRouteImport.update({
+  id: '/api/cron/notifications',
+  path: '/api/cron/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/app/whatsapp': typeof AppWhatsappRoute
   '/book/$orgSlug': typeof BookOrgSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/notifications': typeof ApiCronNotificationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/app/whatsapp': typeof AppWhatsappRoute
   '/book/$orgSlug': typeof BookOrgSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/notifications': typeof ApiCronNotificationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/app/whatsapp': typeof AppWhatsappRoute
   '/book/$orgSlug': typeof BookOrgSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cron/notifications': typeof ApiCronNotificationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/app/whatsapp'
     | '/book/$orgSlug'
     | '/api/auth/$'
+    | '/api/cron/notifications'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/app/whatsapp'
     | '/book/$orgSlug'
     | '/api/auth/$'
+    | '/api/cron/notifications'
   id:
     | '__root__'
     | '/'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/app/whatsapp'
     | '/book/$orgSlug'
     | '/api/auth/$'
+    | '/api/cron/notifications'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   BookOrgSlugRoute: typeof BookOrgSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCronNotificationsRoute: typeof ApiCronNotificationsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -355,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgendaRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/api/cron/notifications': {
+      id: '/api/cron/notifications'
+      path: '/api/cron/notifications'
+      fullPath: '/api/cron/notifications'
+      preLoaderRoute: typeof ApiCronNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -403,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   BookOrgSlugRoute: BookOrgSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCronNotificationsRoute: ApiCronNotificationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

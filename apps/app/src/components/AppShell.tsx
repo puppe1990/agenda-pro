@@ -1,15 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useRouterState } from '@tanstack/react-router'
 import {
   Calendar,
   ClipboardList,
   FileText,
   LayoutDashboard,
+  Menu,
   MessageCircle,
   Settings,
   Stethoscope,
   Users,
   Wallet,
+  X,
 } from 'lucide-react'
 
 import { SidebarLogoutButton } from '#/components/SidebarLogoutButton'
@@ -99,10 +101,27 @@ const settingsNav = [
   { to: '/app/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
-const mobileNav = [...nav, ...settingsNav].slice(0, 5)
+const mobilePrimaryNav = nav.slice(0, 4)
+const mobileOverflowNav = [...nav.slice(4), ...settingsNav]
+
+function isOverflowRoute(pathname: string) {
+  return mobileOverflowNav.some((item) => pathname.startsWith(item.to))
+}
 
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const [menuPathname, setMenuPathname] = useState<string | null>(null)
+  const menuOpen = menuPathname === pathname
+  const maisActive = menuOpen || isOverflowRoute(pathname)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [menuOpen])
 
   return (
     <div className="min-h-screen bg-[var(--page-bg)] pb-20 text-[var(--sea-ink)] md:pb-6">
@@ -170,11 +189,62 @@ export function AppShell() {
         </main>
       </div>
 
+      {menuOpen ? (
+        <button
+          type="button"
+          className="app-mobile-nav-backdrop md:hidden"
+          aria-label="Fechar menu"
+          onClick={() => setMenuPathname(null)}
+        />
+      ) : null}
+
+      <div
+        id="mobile-nav-menu"
+        className={`app-mobile-nav-menu md:hidden ${menuOpen ? 'is-open' : ''}`}
+        role="dialog"
+        aria-label="Mais opções"
+        aria-hidden={!menuOpen}
+      >
+        <div className="app-mobile-nav-menu-header">
+          <p className="app-mobile-nav-menu-title">Menu</p>
+          <button
+            type="button"
+            className="app-mobile-nav-menu-close"
+            aria-label="Fechar menu"
+            onClick={() => setMenuPathname(null)}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <nav className="app-mobile-nav-menu-links" aria-label="Outras seções">
+          {mobileOverflowNav.map((item) => {
+            const Icon = item.icon
+            const active = pathname.startsWith(item.to)
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`app-nav-link ${active ? 'is-active' : ''}`}
+                onClick={() => setMenuPathname(null)}
+              >
+                <Icon size={16} strokeWidth={active ? 2.25 : 2} />
+                {item.label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div className="app-mobile-nav-menu-footer">
+          <SidebarLogoutButton />
+        </div>
+      </div>
+
       <nav
         className="app-mobile-nav md:hidden"
         aria-label="Navegação principal"
       >
-        {mobileNav.map((item) => {
+        {mobilePrimaryNav.map((item) => {
           const Icon = item.icon
           const active = pathname.startsWith(item.to)
           return (
@@ -182,12 +252,23 @@ export function AppShell() {
               key={item.to}
               to={item.to}
               className={`app-mobile-nav-link ${active ? 'is-active' : ''}`}
+              onClick={() => setMenuPathname(null)}
             >
               <Icon size={18} strokeWidth={active ? 2.25 : 2} />
               {item.label}
             </Link>
           )
         })}
+        <button
+          type="button"
+          className={`app-mobile-nav-link ${maisActive ? 'is-active' : ''}`}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-menu"
+          onClick={() => setMenuPathname(menuOpen ? null : pathname)}
+        >
+          <Menu size={18} strokeWidth={maisActive ? 2.25 : 2} />
+          Mais
+        </button>
       </nav>
     </div>
   )

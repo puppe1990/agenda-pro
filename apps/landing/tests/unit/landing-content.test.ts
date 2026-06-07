@@ -8,6 +8,8 @@ import {
   LANDING_STEPS,
   LANDING_TESTIMONIALS,
   WHATSAPP_BUTTONS,
+  DEFAULT_APP_URL,
+  getAppBaseUrl,
   getAppUrl,
   getDefaultWhatsAppPhone,
   getLandingFeatureIds,
@@ -27,12 +29,20 @@ describe('landing content', () => {
     ])
   })
 
+  it('resolves app base url from env, dev fallback or production default', () => {
+    expect(getAppBaseUrl('https://app.gestaobem.com')).toBe(
+      'https://app.gestaobem.com',
+    )
+    expect(getAppBaseUrl(undefined, true)).toBe('http://localhost:3000')
+    expect(getAppBaseUrl(undefined, false)).toBe(DEFAULT_APP_URL)
+  })
+
   it('builds signup and login urls from app base url', () => {
     expect(getAppUrl('/signup', 'http://localhost:3000')).toBe(
       'http://localhost:3000/signup',
     )
-    expect(getAppUrl('login', 'https://app.agendapro.com/')).toBe(
-      'https://app.agendapro.com/login',
+    expect(getAppUrl('login', 'https://app.gestaobem.com/')).toBe(
+      'https://app.gestaobem.com/login',
     )
   })
 

@@ -172,6 +172,15 @@ export function getLandingFeatureIds(features = LANDING_FEATURES): string[] {
   return features.map((feature) => feature.id)
 }
 
+export const DEFAULT_APP_URL = 'https://app.gestaobem.com'
+
+export function getAppBaseUrl(envUrl?: string, isDev?: boolean): string {
+  const url = envUrl ?? import.meta.env.VITE_APP_URL
+  if (url) return url
+  const dev = isDev ?? import.meta.env.DEV
+  return dev ? 'http://localhost:3000' : DEFAULT_APP_URL
+}
+
 export function getAppUrl(path: string, appBaseUrl: string): string {
   const base = appBaseUrl.replace(/\/$/, '')
   const normalizedPath = path.startsWith('/') ? path : `/${path}`

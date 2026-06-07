@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "22"
-  VITE_APP_URL = "https://app.agendapro.com.br"
+  VITE_APP_URL = "https://app.gestaobem.com"
   VITE_WHATSAPP_PHONE = "5521987962324"
 
 [functions]

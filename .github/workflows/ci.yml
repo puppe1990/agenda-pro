@@ -20,12 +20,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm format:check
       - run: pnpm lint
-      - run: pnpm audit:deps
-      - run: pnpm typecheck
+      - run: pnpm -r typecheck
       - run: pnpm test
       - run: pnpm build
 
-  e2e:
+  e2e-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +36,25 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm build
-      - run: pnpm test:e2e
+      - run: pnpm --filter @agenda-pro/app exec playwright install --with-deps chromium
+      - run: pnpm --filter @agenda-pro/app build
+      - run: pnpm --filter @agenda-pro/app test:e2e
         env:
           TURSO_DATABASE_URL: file:e2e.db
           BETTER_AUTH_SECRET: ci-better-auth-secret-long-enough-for-tests
+
+  e2e-landing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @agenda-pro/landing exec playwright install --with-deps chromium
+      - run: pnpm --filter @agenda-pro/landing build
+      - run: pnpm --filter @agenda-pro/landing test:e2e

@@ -1,3 +1,135 @@
+# AGENTS.md
+
+Guia para agentes de IA trabalhando neste repositório.
+
+## Visão geral
+
+**Agenda Pro** é um SaaS multi-tenant para salões, clínicas e estúdios. O monorepo contém:
+
+- **`apps/app`** — painel operacional, autenticação, portal público `/book/{slug}`
+- **`apps/landing`** — marketing, blog MDX e CTAs para o app
+- **`packages/theme`** — tokens CSS compartilhados (paleta rose/lagoon)
+
+Stack principal: TanStack Start, React 19, TanStack Router, Drizzle + Turso, Better Auth, Tailwind 4, Zod.
+
+## Estrutura e onde editar
+
+| Tarefa                      | Onde olhar                                 |
+| --------------------------- | ------------------------------------------ |
+| Nova rota do painel         | `apps/app/src/routes/app/`                 |
+| Rotas públicas (auth, book) | `apps/app/src/routes/`                     |
+| Server functions            | `apps/app/src/server/fns/`                 |
+| Regras de negócio           | `apps/app/src/server/services/`            |
+| Schema / migrations         | `apps/app/src/server/db/schema/`           |
+| Componentes UI do painel    | `apps/app/src/components/`                 |
+| Auth (servidor)             | `apps/app/src/server/auth.ts`              |
+| Auth (cliente)              | `apps/app/src/lib/auth-client.ts`          |
+| Tenant / roles              | `apps/app/src/server/middleware/tenant.ts` |
+| Landing copy e CTAs         | `apps/landing/src/lib/landing-content.ts`  |
+| Posts do blog               | `apps/landing/content/blog/*.mdx`          |
+| Tema compartilhado          | `packages/theme/styles.css`                |
+
+## Convenções de código
+
+### Imports e paths
+
+- Use `#/*` para imports internos (ex.: `#/server/fns/app`, `#/components/PageHeader`).
+- Não introduza novos aliases sem necessidade; siga o padrão existente em cada `package.json`.
+
+### Rotas (TanStack Router)
+
+- Rotas file-based em `src/routes/`; o plugin gera `routeTree.gen.ts` — **não edite** esse arquivo manualmente.
+- Layout autenticado: `apps/app/src/routes/app/route.tsx` redireciona para `/login` se não houver sessão.
+- Loaders buscam dados via server functions; prefira `Route.useLoaderData()` no componente.
+- Portal público: `apps/app/src/routes/book/$orgSlug.tsx` (sem auth).
+
+### Server functions
+
+- Crie funções com `createServerFn` em `server/fns/`.
+- Valide entrada com Zod no handler (`data` tipado).
+- Operações do painel devem passar por `requireTenantContext()` e, quando aplicável, `assertRole()`.
+- Agendamento público usa rate limit (`assertPublicBookingRateLimit`).
+
+### Banco de dados
+
+- Schema modular em `server/db/schema/` (auth, organizations, scheduling, finance, clinical, notifications).
+- Cliente: `server/db/client.ts`.
+- Local: `TURSO_DATABASE_URL=file:local.db`. Produção: Turso remoto com `TURSO_AUTH_TOKEN`.
+- Seed demo: `pnpm db:seed` → slug `studio-demo`, URL `/book/studio-demo`.
+
+### Dinheiro e datas
+
+- Valores financeiros em **centavos** (`formatCents`, `lib/money.ts`).
+- Datas com `date-fns` e `date-fns-tz` quando houver fuso.
+
+### Landing
+
+- Copy centralizada em `landing-content.ts`; alterações de texto/URL devem manter testes em `apps/landing/tests/unit/`.
+- `getAppUrl()` monta links para signup/login a partir de `VITE_APP_URL`.
+- Blog: frontmatter MDX + rotas em `src/routes/blog/`.
+
+### Estilo
+
+- Tailwind 4 com variáveis CSS do tema (`--sea-ink`, `--lagoon-deep`, etc.).
+- Reutilize classes utilitárias existentes (`btn-primary`, `app-nav-link`, `page-wrap`).
+- Importe `@agenda-pro/theme/styles.css` no root de cada app.
+
+## Testes
+
+| Tipo        | App                           | Landing                    |
+| ----------- | ----------------------------- | -------------------------- |
+| Unit        | `apps/app/tests/unit/`        | `apps/landing/tests/unit/` |
+| Integration | `apps/app/tests/integration/` | —                          |
+| E2E         | `apps/app/tests/e2e/`         | `apps/landing/tests/e2e/`  |
+
+Antes de concluir mudanças significativas:
+
+```bash
+pnpm verify                    # todos os pacotes
+pnpm --filter @agenda-pro/app verify:full   # app + e2e
+```
+
+CI (`.github/workflows/ci.yml`) espelha esses passos em três jobs.
+
+## Comandos úteis
+
+```bash
+pnpm install
+pnpm dev:app          # :3000
+pnpm dev:landing      # :3001
+pnpm db:push
+pnpm db:seed
+pnpm verify
+```
+
+Node **22** e pnpm **11.5.1** (ver `packageManager` na raiz).
+
+## Deploy
+
+- App: AWS Amplify via `amplify.yml` (build em `apps/app`, artefatos em `.amplify-hosting`).
+- Build de produção roda `db:push` antes do `vite build`.
+- `BETTER_AUTH_URL` deve ser a URL pública final do app.
+- Landing: deploy separado; configure `VITE_APP_URL` para o domínio do app.
+
+## O que evitar
+
+- Não commitar `.env`, `*.db`, `.amplify-hosting`, `test-results` ou `playwright-report`.
+- Não editar `routeTree.gen.ts` manualmente.
+- Não misturar lógica de negócio pesada em componentes de rota — extraia para `server/services/`.
+- Não quebrar isolamento multi-tenant; sempre use o contexto da organização nas queries.
+- Não alterar copy da landing sem atualizar testes unitários correspondentes.
+- Escopo mínimo: evite refatorações amplas não solicitadas.
+
+## Módulos do painel
+
+Navegação em `AppShell.tsx`:
+
+Dashboard, Agenda, Clientes, Serviços, Financeiro, Equipe, WhatsApp, Anamnese, Relatórios, Configurações.
+
+Features transversais: notificações (cron + fila), LGPD (export/delete de dados do cliente), recibos PDF, PWA.
+
+---
+
 <!-- intent-skills:start -->
 
 # Skill mappings - load `use` with `pnpm dlx @tanstack/intent@latest load <use>`.

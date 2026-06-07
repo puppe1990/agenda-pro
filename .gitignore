@@ -3,6 +3,9 @@ node_modules
 dist
 .output
 .amplify-hosting
+.playwright-cli
+.netlify
+**/.netlify
 .env
 .env.local
 *.db

@@ -8,10 +8,10 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
-        - pnpm db:push
-        - pnpm build
+        - pnpm --filter @agenda-pro/app db:push
+        - pnpm --filter @agenda-pro/app build
   artifacts:
-    baseDirectory: .amplify-hosting
+    baseDirectory: apps/app/.amplify-hosting
     files:
       - '**/*'
   cache:

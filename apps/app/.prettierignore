@@ -1,0 +1,5 @@
+dist
+.output
+node_modules
+.amplify-hosting
+**/routeTree.gen.ts

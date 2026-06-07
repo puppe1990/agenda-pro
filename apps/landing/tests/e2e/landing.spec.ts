@@ -1,5 +1,26 @@
 import { expect, test } from '@playwright/test'
 
+test('landing page exposes social preview metadata', async ({ page }) => {
+  await page.goto('/')
+
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+    'content',
+    'Gestão Bem',
+  )
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+    'content',
+    /Agenda, CRM e financeiro/i,
+  )
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    /\/og-image\.png$/,
+  )
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    'content',
+    'summary_large_image',
+  )
+})
+
 test('landing page loads', async ({ page }) => {
   await page.goto('/')
   await expect(

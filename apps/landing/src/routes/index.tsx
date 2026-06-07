@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+
+import { buildSocialMetaTags } from '#/lib/social-meta'
 import { Calendar, ChartColumn, Users, Wallet } from 'lucide-react'
 
 import { BlogPostCard } from '#/components/BlogPostCard'
@@ -22,6 +24,20 @@ import {
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
+  head: () => {
+    const meta = getLandingMeta()
+    return {
+      meta: [
+        { title: meta.title },
+        { name: 'description', content: meta.description },
+        ...buildSocialMetaTags({
+          title: meta.title,
+          description: meta.description,
+          path: '/',
+        }),
+      ],
+    }
+  },
 })
 
 const featureIcons = {

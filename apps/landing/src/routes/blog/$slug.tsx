@@ -3,6 +3,7 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { BlogArticle } from '#/components/BlogArticle'
 import { BlogChrome } from '#/components/BlogChrome'
 import { getAllBlogPosts, getBlogPostModule } from '#/lib/blog-posts'
+import { buildSocialMetaTags } from '#/lib/social-meta'
 
 export const Route = createFileRoute('/blog/$slug')({
   loader: ({ params }) => {
@@ -20,10 +21,18 @@ export const Route = createFileRoute('/blog/$slug')({
       return { meta: [{ title: 'Artigo não encontrado' }] }
     }
 
+    const title = `${post.title} | Gestão Bem`
+
     return {
       meta: [
-        { title: `${post.title} | Gestão Bem` },
+        { title },
         { name: 'description', content: post.description },
+        ...buildSocialMetaTags({
+          title,
+          description: post.description,
+          path: `/blog/${post.slug}`,
+          type: 'article',
+        }),
       ],
     }
   },

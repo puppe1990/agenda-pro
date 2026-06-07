@@ -5,6 +5,7 @@
 [build.environment]
   NODE_VERSION = "22"
   VITE_APP_URL = "https://app.gestaobem.com"
+  VITE_LANDING_URL = "https://gestaobem.com"
   VITE_WHATSAPP_PHONE = "5521987962324"
 
 [functions]

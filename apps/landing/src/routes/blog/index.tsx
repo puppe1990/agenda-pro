@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { BlogChrome } from '#/components/BlogChrome'
 import { BlogPostCard } from '#/components/BlogPostCard'
 import { getBlogIndexMeta } from '#/lib/blog'
+import { buildSocialMetaTags } from '#/lib/social-meta'
 import { getAllBlogPosts } from '#/lib/blog-posts'
 
 export const Route = createFileRoute('/blog/')({
@@ -13,6 +14,11 @@ export const Route = createFileRoute('/blog/')({
       meta: [
         { title: meta.title },
         { name: 'description', content: meta.description },
+        ...buildSocialMetaTags({
+          title: meta.title,
+          description: meta.description,
+          path: '/blog',
+        }),
       ],
     }
   },

@@ -11,6 +11,12 @@ applications:
             - pnpm install --frozen-lockfile
         build:
           commands:
+            - rm -f apps/app/.env.production
+            - env | grep -e '^TURSO_DATABASE_URL=' >> apps/app/.env.production
+            - env | grep -e '^TURSO_AUTH_TOKEN=' >> apps/app/.env.production
+            - env | grep -e '^BETTER_AUTH_SECRET=' >> apps/app/.env.production
+            - env | grep -e '^BETTER_AUTH_URL=' >> apps/app/.env.production
+            - env | grep -e '^CRON_SECRET=' >> apps/app/.env.production
             - pnpm --filter @agenda-pro/app db:push
             - pnpm --filter @agenda-pro/app build
       artifacts:

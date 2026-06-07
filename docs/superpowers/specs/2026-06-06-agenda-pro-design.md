@@ -28,4 +28,4 @@ SaaS multi-tenant para agenda, CRM, financeiro, WhatsApp (deep links), portal p√
 
 - `pnpm verify` no CI
 - pre-commit: lint-staged + test + audit quando lock muda
-- e2e smoke na Fase 0; fluxos adicionais em `tests/e2e/agenda.spec.ts`
+- e2e smoke na Fase 0; fluxos autenticados em `tests/e2e/authenticated-flows.spec.ts`

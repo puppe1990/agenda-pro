@@ -26,21 +26,37 @@ const { db, tursoClient } = await import('#/server/db/client')
 const { users } = await import('#/server/db/schema')
 const { seedDemoOrganization } = await import('#/server/db/seed')
 const { auth } = await import('#/server/auth')
+const { createOrganizationForUser } =
+  await import('#/server/services/onboarding')
 
 await seedDemoOrganization()
 
 const e2eEmail = 'e2e-fixed@gmail.com'
-const existing = await db.query.users.findFirst({
+const e2ePassword = 'SenhaE2E-123'
+const e2eName = 'E2E Profissional'
+
+let e2eUser = await db.query.users.findFirst({
   where: eq(users.email, e2eEmail),
 })
 
-if (!existing) {
+if (!e2eUser) {
   await auth.api.signUpEmail({
     body: {
       email: e2eEmail,
-      password: 'SenhaE2E-123',
-      name: 'E2E Profissional',
+      password: e2ePassword,
+      name: e2eName,
     },
+  })
+  e2eUser = await db.query.users.findFirst({
+    where: eq(users.email, e2eEmail),
+  })
+}
+
+if (e2eUser) {
+  await createOrganizationForUser({
+    userId: e2eUser.id,
+    userName: e2eName,
+    organizationName: 'Studio E2E',
   })
 }
 

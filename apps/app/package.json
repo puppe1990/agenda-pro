@@ -29,8 +29,10 @@
   },
   "dependencies": {
     "@agenda-pro/theme": "workspace:*",
+    "@better-auth/core": "^1.6.14",
     "@better-auth/drizzle-adapter": "^1.6.14",
     "@better-auth/kysely-adapter": "^1.6.14",
+    "@better-auth/utils": "^0.4.1",
     "@hookform/resolvers": "^5.4.0",
     "@libsql/client": "^0.17.3",
     "@sentry/node": "^10.56.0",

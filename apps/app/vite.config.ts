@@ -21,7 +21,12 @@ const config = defineConfig({
     devtools(),
     nitro({
       preset: 'aws_amplify',
-      rollupConfig: { external: [/^@sentry\//] },
+      traceDeps: [
+        '@better-auth/kysely-adapter*',
+        '@better-auth/core*',
+        '@better-auth/utils*',
+        'kysely*',
+      ],
     }),
     tailwindcss(),
     tanstackStart(),

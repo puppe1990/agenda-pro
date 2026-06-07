@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 ./node_modules/.bin/lint-staged || exit 1
 
-if git diff --cached --name-only | grep -Eq '^(package\.json|pnpm-lock\.yaml)$'; then
-  pnpm audit:deps || exit 1
+if git diff --cached --name-only | grep -Eq '^(pnpm-lock\.yaml|apps/.+/package\.json|packages/.+/package\.json)$'; then
+  pnpm --filter @agenda-pro/app audit:deps || exit 1
 fi
 
-./node_modules/.bin/vitest run
+pnpm test

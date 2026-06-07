@@ -30,7 +30,7 @@ applications:
               const importLine='import { dirname, resolve } from \"node:path\";';
               if(!t.includes('readFileSync')) t=t.replace(importLine, importLine + '\nimport { existsSync, readFileSync } from \"node:fs\";');
               const marker='//#region #nitro-vite-setup\n';
-              const bootstrap='//#region #nitro-env-bootstrap\nconst envFile = resolve(dirname(fileURLToPath(import.meta.url)), \".env.production\");\nif (existsSync(envFile)) {\n  for (const line of readFileSync(envFile, \"utf8\").split(/\\r?\\n/)) {\n    if (!line || line.trim().startsWith(\"#\") || !line.includes(\"=\")) continue;\n    const idx = line.indexOf(\"=\");\n    const key = line.slice(0, idx);\n    const value = line.slice(idx + 1);\n    if (!(key in process.env)) process.env[key] = value;\n  }\n}\n//#endregion\n\n//#region #nitro-vite-setup\n';
+              const bootstrap='//#region #nitro-env-bootstrap\nconst envFile = resolve(dirname(fileURLToPath(import.meta.url)), \".env.production\");\nif (existsSync(envFile)) {\n  const cr = String.fromCharCode(13);\n  const lf = String.fromCharCode(10);\n  for (const line of readFileSync(envFile, \"utf8\").replaceAll(cr, \"\").split(lf)) {\n    if (!line || line.trim().startsWith(\"#\") || !line.includes(\"=\")) continue;\n    const idx = line.indexOf(\"=\");\n    const key = line.slice(0, idx);\n    const value = line.slice(idx + 1);\n    if (!(key in process.env)) process.env[key] = value;\n  }\n}\n//#endregion\n\n//#region #nitro-vite-setup\n';
               if(t.includes(marker) && !t.includes('//#region #nitro-env-bootstrap')) t=t.replace(marker, bootstrap);
               fs.writeFileSync(p,t);"
       artifacts:

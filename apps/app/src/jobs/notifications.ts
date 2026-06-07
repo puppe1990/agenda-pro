@@ -21,7 +21,7 @@ export async function processDueNotifications(now = new Date()) {
       if (client?.email) {
         await sendTransactionalEmail({
           to: client.email,
-          subject: 'Agenda Pro',
+          subject: 'Agenda Bem',
           body: item.message,
         })
       }

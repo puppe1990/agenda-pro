@@ -49,10 +49,10 @@ export function formatPostDate(publishedAt: string, locale = 'pt-BR'): string {
 
 export function getBlogIndexMeta() {
   return {
-    title: 'Blog | Agenda Pro',
+    title: 'Blog | Agenda Bem',
     description:
       'Dicas de agenda, atendimento e gestão para salões, clínicas e consultórios.',
-    heading: 'Blog Agenda Pro',
+    heading: 'Blog Agenda Bem',
     lead: 'Conteúdo prático para organizar agenda, clientes e financeiro no dia a dia do seu negócio.',
   }
 }

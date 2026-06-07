@@ -38,7 +38,7 @@ describe('landing content', () => {
 
   it('defines landing page metadata', () => {
     expect(getLandingMeta()).toMatchObject({
-      title: 'Agenda Pro',
+      title: 'Agenda Bem',
       kicker: expect.stringContaining('salões'),
       headline: expect.stringContaining('Agenda'),
       ctaTitle: expect.stringContaining('organizar'),

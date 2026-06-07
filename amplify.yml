@@ -22,6 +22,17 @@ applications:
             - mkdir -p apps/app/.amplify-hosting/compute/default/node_modules
             - cp -RL apps/app/node_modules/@better-auth apps/app/.amplify-hosting/compute/default/node_modules/
             - cp -RL apps/app/node_modules/kysely apps/app/.amplify-hosting/compute/default/node_modules/
+            - cp apps/app/.env.production apps/app/.amplify-hosting/compute/default/.env.production
+            - >-
+              node -e "const fs=require('node:fs');
+              const p='apps/app/.amplify-hosting/compute/default/index.mjs';
+              let t=fs.readFileSync(p,'utf8');
+              const importLine='import { dirname, resolve } from \"node:path\";';
+              if(!t.includes('readFileSync')) t=t.replace(importLine, importLine + '\nimport { existsSync, readFileSync } from \"node:fs\";');
+              const marker='//#region #nitro-vite-setup\n';
+              const bootstrap='//#region #nitro-env-bootstrap\nconst envFile = resolve(dirname(fileURLToPath(import.meta.url)), \".env.production\");\nif (existsSync(envFile)) {\n  for (const line of readFileSync(envFile, \"utf8\").split(/\\r?\\n/)) {\n    if (!line || line.trim().startsWith(\"#\") || !line.includes(\"=\")) continue;\n    const idx = line.indexOf(\"=\");\n    const key = line.slice(0, idx);\n    const value = line.slice(idx + 1);\n    if (!(key in process.env)) process.env[key] = value;\n  }\n}\n//#endregion\n\n//#region #nitro-vite-setup\n';
+              if(t.includes(marker) && !t.includes('//#region #nitro-env-bootstrap')) t=t.replace(marker, bootstrap);
+              fs.writeFileSync(p,t);"
       artifacts:
         baseDirectory: apps/app/.amplify-hosting
         files:

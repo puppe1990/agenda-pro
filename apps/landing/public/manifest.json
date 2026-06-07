@@ -1,6 +1,6 @@
 {
-  "name": "Agenda Bem",
-  "short_name": "AgendaBem",
+  "name": "Gestão Bem",
+  "short_name": "GestaoBem",
   "description": "Agenda, CRM e financeiro para salões, clínicas e consultórios",
   "start_url": "/",
   "display": "standalone",

@@ -46,7 +46,7 @@ test('section anchors are present', async ({ page }) => {
 test('blog index lists articles', async ({ page }) => {
   await page.goto('/blog')
   await expect(
-    page.getByRole('heading', { name: /Blog Agenda Bem/i }),
+    page.getByRole('heading', { name: /Blog Gestão Bem/i }),
   ).toBeVisible()
   await expect(
     page.getByRole('link', { name: /reduzir faltas na agenda/i }),

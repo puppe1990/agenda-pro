@@ -1,4 +1,4 @@
-# Agenda Bem
+# Gestão Bem
 
 SaaS de gestão para salões, clínicas e estúdios de beleza e bem-estar. Monorepo com o painel operacional e a landing page de marketing.
 

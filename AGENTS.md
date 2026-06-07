@@ -4,7 +4,7 @@ Guia para agentes de IA trabalhando neste repositório.
 
 ## Visão geral
 
-**Agenda Bem** é um SaaS multi-tenant para salões, clínicas e estúdios. O monorepo contém:
+**Gestão Bem** é um SaaS multi-tenant para salões, clínicas e estúdios. O monorepo contém:
 
 - **`apps/app`** — painel operacional, autenticação, portal público `/book/{slug}`
 - **`apps/landing`** — marketing, blog MDX e CTAs para o app

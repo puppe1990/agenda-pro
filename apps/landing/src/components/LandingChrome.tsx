@@ -18,7 +18,7 @@ export function LandingHeader() {
       <div className="page-wrap px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 no-underline">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white">
-            AB
+            GB
           </span>
           <span className="text-sm font-bold text-[var(--sea-ink)]">
             {meta.title}
@@ -119,7 +119,7 @@ export function LandingFooter() {
           <div>
             <div className="mb-3 flex items-center gap-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white">
-                AB
+                GB
               </span>
               <span className="text-sm font-bold text-[var(--sea-ink)]">
                 {meta.title}

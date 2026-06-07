@@ -13,7 +13,7 @@ export default async function globalSetup() {
     }
   }
 
-  execSync('pnpm exec drizzle-kit push', {
+  execSync('./node_modules/.bin/drizzle-kit push', {
     stdio: 'inherit',
     env: {
       ...process.env,

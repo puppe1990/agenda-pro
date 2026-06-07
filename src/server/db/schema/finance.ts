@@ -76,6 +76,7 @@ export const receipts = sqliteTable('receipts', {
     .notNull()
     .references(() => transactions.id, { onDelete: 'cascade' }),
   contentHtml: text('content_html').notNull(),
+  contentPdfBase64: text('content_pdf_base64'),
   ...timestamps,
 })
 

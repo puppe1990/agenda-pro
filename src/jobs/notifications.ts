@@ -2,6 +2,7 @@ import { and, eq, lte } from 'drizzle-orm'
 
 import { db } from '#/server/db/client'
 import { clients, notificationQueue } from '#/server/db/schema'
+import { sendTransactionalEmail } from '#/server/services/email'
 import { renderTemplate } from '#/server/services/whatsapp'
 
 export async function processDueNotifications(now = new Date()) {
@@ -13,6 +14,19 @@ export async function processDueNotifications(now = new Date()) {
   })
 
   for (const item of due) {
+    if (item.channel === 'email' && item.clientId) {
+      const client = await db.query.clients.findFirst({
+        where: eq(clients.id, item.clientId),
+      })
+      if (client?.email) {
+        await sendTransactionalEmail({
+          to: client.email,
+          subject: 'Agenda Pro',
+          body: item.message,
+        })
+      }
+    }
+
     await db
       .update(notificationQueue)
       .set({

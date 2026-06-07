@@ -10,6 +10,7 @@ const env = readEnv()
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
+  trustedOrigins: [env.BETTER_AUTH_URL],
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema,

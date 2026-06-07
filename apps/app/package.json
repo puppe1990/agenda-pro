@@ -29,6 +29,8 @@
   },
   "dependencies": {
     "@agenda-pro/theme": "workspace:*",
+    "@aws-sdk/client-s3": "^3.1063.0",
+    "@aws-sdk/s3-request-presigner": "^3.1063.0",
     "@better-auth/core": "^1.6.14",
     "@better-auth/drizzle-adapter": "^1.6.14",
     "@better-auth/kysely-adapter": "^1.6.14",

@@ -213,29 +213,38 @@ function PublicBookingPage() {
                         key={service.id}
                         type="button"
                         onClick={() => handleServiceSelect(service.id)}
-                        className={`rounded-xl border p-4 text-left transition ${
+                        className={`rounded-xl border text-left transition ${
                           selected
                             ? 'border-[var(--lagoon-deep)] bg-[var(--chip-bg)] ring-2 ring-[var(--accent-soft)]'
                             : 'border-[var(--line)] bg-[var(--surface)] hover:border-[color-mix(in_oklab,var(--lagoon-deep)_30%,var(--line))]'
                         }`}
                       >
-                        <p className="font-semibold text-[var(--sea-ink)]">
-                          {service.name}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-3 text-xs text-[var(--sea-ink-soft)]">
-                          <span className="inline-flex items-center gap-1">
-                            <Clock size={12} />
-                            {service.durationMinutes} min
-                          </span>
-                          {service.priceCents > 0 && (
-                            <span>{formatCents(service.priceCents)}</span>
+                        {service.imageUrl && (
+                          <img
+                            src={service.imageUrl}
+                            alt={service.name}
+                            className="h-36 w-full rounded-t-xl object-cover"
+                          />
+                        )}
+                        <div className="p-4">
+                          <p className="font-semibold text-[var(--sea-ink)]">
+                            {service.name}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-3 text-xs text-[var(--sea-ink-soft)]">
+                            <span className="inline-flex items-center gap-1">
+                              <Clock size={12} />
+                              {service.durationMinutes} min
+                            </span>
+                            {service.priceCents > 0 && (
+                              <span>{formatCents(service.priceCents)}</span>
+                            )}
+                          </div>
+                          {service.description && (
+                            <p className="mt-2 text-xs text-[var(--sea-ink-soft)]">
+                              {service.description}
+                            </p>
                           )}
                         </div>
-                        {service.description && (
-                          <p className="mt-2 text-xs text-[var(--sea-ink-soft)]">
-                            {service.description}
-                          </p>
-                        )}
                       </button>
                     )
                   })}

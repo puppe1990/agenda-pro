@@ -6,11 +6,9 @@ export function PageHeader({
   description?: string
 }) {
   return (
-    <div className="mb-6">
-      <h1 className="text-2xl font-bold text-[var(--sea-ink)]">{title}</h1>
-      {description && (
-        <p className="mt-1 text-sm text-[var(--sea-ink-soft)]">{description}</p>
-      )}
-    </div>
+    <header className="mb-6 border-b border-[var(--line)] pb-5">
+      <h1 className="page-title">{title}</h1>
+      {description && <p className="page-subtitle">{description}</p>}
+    </header>
   )
 }

@@ -24,7 +24,7 @@ export const Route = createRootRoute({
         name: 'description',
         content: 'Agenda, CRM e financeiro para seu negócio',
       },
-      { name: 'theme-color', content: '#2f6a4a' },
+      { name: 'theme-color', content: '#0f766e' },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },

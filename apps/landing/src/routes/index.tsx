@@ -30,6 +30,78 @@ const featureIcons = {
   relatorios: ChartColumn,
 } as const
 
+const testimonialColors = ['#be123c', '#0369a1', '#7c3aed']
+
+function HeroVisual() {
+  return (
+    <div className="hero-preview-wrap" aria-hidden="true">
+      <div className="hero-preview-card">
+        <div className="hero-preview-header">
+          <span
+            className="hero-preview-dot"
+            style={{ background: '#f87171' }}
+          />
+          <span
+            className="hero-preview-dot"
+            style={{ background: '#fbbf24' }}
+          />
+          <span
+            className="hero-preview-dot"
+            style={{ background: '#34d399' }}
+          />
+          <span className="hero-preview-title">Agenda Pro · Hoje</span>
+        </div>
+        <div className="hero-preview-body">
+          <div className="hero-slot hero-slot-booked">
+            <span className="hero-slot-time">09:00</span>
+            <div className="hero-slot-content">
+              <span className="hero-slot-name">Marina Costa</span>
+              <span className="hero-slot-service">Corte + Escova · 45min</span>
+            </div>
+          </div>
+          <div className="hero-slot hero-slot-free">
+            <span className="hero-slot-time">10:00</span>
+            <div className="hero-slot-content">
+              <span className="hero-slot-free-text">Disponível</span>
+            </div>
+          </div>
+          <div className="hero-slot hero-slot-booked">
+            <span className="hero-slot-time">11:00</span>
+            <div className="hero-slot-content">
+              <span className="hero-slot-name">Rafael Mendes</span>
+              <span className="hero-slot-service">Barba · 30min</span>
+            </div>
+          </div>
+          <div className="hero-slot hero-slot-free">
+            <span className="hero-slot-time">14:00</span>
+            <div className="hero-slot-content">
+              <span className="hero-slot-free-text">Disponível</span>
+            </div>
+          </div>
+          <div className="hero-slot hero-slot-booked">
+            <span className="hero-slot-time">15:00</span>
+            <div className="hero-slot-content">
+              <span className="hero-slot-name">Júlia Santos</span>
+              <span className="hero-slot-service">Manicure · 60min</span>
+            </div>
+          </div>
+        </div>
+        <div className="hero-preview-footer">
+          <span className="hero-preview-new-btn">+ Novo agendamento</span>
+        </div>
+      </div>
+
+      <div className="hero-notification">
+        <span className="hero-notification-dot" />
+        <div>
+          <p className="hero-notification-title">Confirmado!</p>
+          <p className="hero-notification-sub">Marina · hoje às 09:00</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function LandingPage() {
   const appUrl = import.meta.env.VITE_APP_URL ?? 'http://localhost:3000'
   const meta = getLandingMeta()
@@ -37,40 +109,46 @@ function LandingPage() {
 
   return (
     <>
-      <main className="page-wrap px-4 pb-8">
-        <LandingHeader />
+      <LandingHeader />
 
+      <main className="page-wrap px-4 pb-8">
         <section className="landing-hero">
-          <p className="island-kicker mb-4">{meta.kicker}</p>
-          <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            {meta.headline}
-          </h1>
-          <p className="mb-8 max-w-xl text-base leading-relaxed text-[var(--sea-ink-soft)] sm:text-lg">
-            {meta.subheadline}
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href={getAppUrl('/signup', appUrl)}
-              className="btn-primary px-6 py-3 no-underline"
-            >
-              Começar grátis
-            </a>
-            <a
-              href={getAppUrl('/login', appUrl)}
-              className="btn-secondary px-6 py-3 no-underline"
-            >
-              Entrar
-            </a>
+          <div className="landing-hero-grid">
+            <div className="landing-hero-content rise-in">
+              <p className="island-kicker mb-4">{meta.kicker}</p>
+              <h1 className="display-title mb-5 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                {meta.headline}
+              </h1>
+              <p className="mb-8 max-w-xl text-base leading-relaxed text-[var(--sea-ink-soft)] sm:text-lg">
+                {meta.subheadline}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={getAppUrl('/signup', appUrl)}
+                  className="btn-primary px-6 py-3 no-underline"
+                >
+                  Começar grátis
+                </a>
+                <a
+                  href={getAppUrl('/login', appUrl)}
+                  className="btn-secondary px-6 py-3 no-underline"
+                >
+                  Entrar
+                </a>
+              </div>
+            </div>
+
+            <HeroVisual />
           </div>
         </section>
 
         <section className="landing-section" aria-label="Números do produto">
-          <div className="landing-stat-grid">
+          <div className="landing-stat-band">
             {LANDING_STATS.map((stat) => (
-              <article key={stat.id} className="stat-card text-center">
-                <p className="stat-card-value">{stat.value}</p>
-                <p className="stat-card-label">{stat.label}</p>
-              </article>
+              <div key={stat.id} className="landing-stat-item">
+                <p className="landing-stat-value">{stat.value}</p>
+                <p className="landing-stat-label">{stat.label}</p>
+              </div>
             ))}
           </div>
         </section>
@@ -91,8 +169,8 @@ function LandingPage() {
                 Calendar
               return (
                 <article key={feature.id} className="landing-feature">
-                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--lagoon-deep)]">
-                    <Icon size={20} />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--lagoon-deep)]">
+                    <Icon size={22} />
                   </div>
                   <h3 className="mb-1.5 text-base font-bold text-[var(--sea-ink)]">
                     {feature.title}
@@ -115,7 +193,7 @@ function LandingPage() {
             Sem planilhas, sem caderno e sem depender de mensagens soltas no
             WhatsApp para organizar a rotina.
           </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="landing-steps-grid mt-8 grid gap-4 md:grid-cols-3">
             {LANDING_STEPS.map((step, index) => (
               <article key={step.id} className="landing-step">
                 <span className="landing-step-number">{index + 1}</span>
@@ -138,12 +216,23 @@ function LandingPage() {
             atendimento e controle financeiro com o Agenda Pro.
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {LANDING_TESTIMONIALS.map((item) => (
+            {LANDING_TESTIMONIALS.map((item, idx) => (
               <blockquote key={item.id} className="landing-testimonial">
-                <p className="landing-testimonial-quote">“{item.quote}”</p>
-                <footer>
-                  <p className="landing-testimonial-author">{item.author}</p>
-                  <p className="landing-testimonial-role">{item.role}</p>
+                <p className="landing-testimonial-quote">"{item.quote}"</p>
+                <footer className="testimonial-footer">
+                  <div
+                    className="testimonial-avatar"
+                    style={{
+                      background:
+                        testimonialColors[idx % testimonialColors.length],
+                    }}
+                  >
+                    {item.author[0]}
+                  </div>
+                  <div>
+                    <p className="landing-testimonial-author">{item.author}</p>
+                    <p className="landing-testimonial-role">{item.role}</p>
+                  </div>
                 </footer>
               </blockquote>
             ))}
@@ -201,7 +290,7 @@ function LandingPage() {
               </a>
               <a
                 href={getAppUrl('/login', appUrl)}
-                className="btn-secondary px-6 py-3 no-underline"
+                className="btn-secondary-white px-6 py-3 no-underline"
               >
                 Já tenho conta
               </a>

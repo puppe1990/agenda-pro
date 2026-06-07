@@ -14,26 +14,52 @@ export function LandingHeader() {
   const appUrl = import.meta.env.VITE_APP_URL ?? 'http://localhost:3000'
 
   return (
-    <header className="flex items-center justify-between py-6">
-      <Link to="/" className="flex items-center gap-2.5 no-underline">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white">
-          AP
-        </span>
-        <span className="text-sm font-bold text-[var(--sea-ink)]">
-          {meta.title}
-        </span>
-      </Link>
-      <nav aria-label="Principal" className="flex items-center gap-3">
-        <Link to="/blog" className="landing-footer-link font-semibold">
-          Blog
+    <header className="landing-header-sticky">
+      <div className="page-wrap px-4 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5 no-underline">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--lagoon-deep)] text-sm font-bold text-white">
+            AP
+          </span>
+          <span className="text-sm font-bold text-[var(--sea-ink)]">
+            {meta.title}
+          </span>
         </Link>
-        <a
-          href={getAppUrl('/login', appUrl)}
-          className="btn-secondary px-4 py-2 text-sm no-underline"
+        <nav
+          aria-label="Principal"
+          className="flex items-center gap-4 sm:gap-6"
         >
-          Entrar
-        </a>
-      </nav>
+          <a
+            href="/#recursos"
+            className="hidden sm:block text-sm font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:text-[var(--sea-ink)]"
+          >
+            Recursos
+          </a>
+          <a
+            href="/#como-funciona"
+            className="hidden sm:block text-sm font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:text-[var(--sea-ink)]"
+          >
+            Como funciona
+          </a>
+          <Link
+            to="/blog"
+            className="hidden sm:block text-sm font-semibold text-[var(--sea-ink-soft)] no-underline transition-colors hover:text-[var(--sea-ink)]"
+          >
+            Blog
+          </Link>
+          <a
+            href={getAppUrl('/signup', appUrl)}
+            className="hidden sm:inline-flex btn-primary px-4 py-2 text-sm no-underline"
+          >
+            Começar grátis
+          </a>
+          <a
+            href={getAppUrl('/login', appUrl)}
+            className="btn-secondary px-4 py-2 text-sm no-underline"
+          >
+            Entrar
+          </a>
+        </nav>
+      </div>
     </header>
   )
 }

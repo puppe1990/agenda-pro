@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { authClient } from '#/lib/auth-client'
@@ -44,63 +45,99 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="island-shell mx-auto max-w-md rounded-2xl p-6"
-    >
-      <h1 className="mb-4 text-2xl font-bold">
-        {mode === 'login' ? 'Entrar' : 'Criar conta'}
-      </h1>
-      {mode === 'signup' && (
-        <>
-          <label className="mb-3 block text-sm">
-            Nome
+    <div className="auth-layout">
+      <div className="auth-panel">
+        <div className="auth-brand">
+          <div className="auth-brand-mark">AP</div>
+          <p className="island-kicker">Agenda Pro</p>
+        </div>
+        <form
+          onSubmit={onSubmit}
+          className="island-shell rounded-2xl p-6 sm:p-7"
+        >
+          <h1 className="page-title mb-1">
+            {mode === 'login' ? 'Entrar' : 'Criar conta'}
+          </h1>
+          <p className="page-subtitle mb-5">
+            {mode === 'login'
+              ? 'Acesse seu painel de agendamentos.'
+              : 'Comece grátis em menos de 2 minutos.'}
+          </p>
+          {mode === 'signup' && (
+            <>
+              <label className="mb-3">
+                Nome
+                <input
+                  className="mt-1.5"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="mb-3">
+                Nome do negócio
+                <input
+                  className="mt-1.5"
+                  value={organizationName}
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  placeholder="Salão, clínica, consultório..."
+                />
+              </label>
+            </>
+          )}
+          <label className="mb-3">
+            E-mail
             <input
-              className="mt-1 w-full rounded-xl border px-3 py-2"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              type="email"
+              className="mt-1.5"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </label>
-          <label className="mb-3 block text-sm">
-            Nome do negócio
+          <label className="mb-4">
+            Senha
             <input
-              className="mt-1 w-full rounded-xl border px-3 py-2"
-              value={organizationName}
-              onChange={(e) => setOrganizationName(e.target.value)}
-              placeholder="Salão, clínica, consultório..."
+              type="password"
+              className="mt-1.5"
+              autoComplete={
+                mode === 'login' ? 'current-password' : 'new-password'
+              }
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </label>
-        </>
-      )}
-      <label className="mb-3 block text-sm">
-        E-mail
-        <input
-          type="email"
-          className="mt-1 w-full rounded-xl border px-3 py-2"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label className="mb-4 block text-sm">
-        Senha
-        <input
-          type="password"
-          className="mt-1 w-full rounded-xl border px-3 py-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-[var(--lagoon-deep)] px-4 py-2 font-semibold text-white"
-      >
-        {loading ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Cadastrar'}
-      </button>
-    </form>
+          {error && (
+            <p className="demo-alert demo-alert-danger mb-4 text-sm">{error}</p>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full"
+          >
+            {loading ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Cadastrar'}
+          </button>
+          <p className="mt-4 text-center text-sm text-[var(--sea-ink-soft)]">
+            {mode === 'login' ? (
+              <>
+                Não tem conta?{' '}
+                <Link to="/signup" className="font-semibold no-underline">
+                  Criar conta
+                </Link>
+              </>
+            ) : (
+              <>
+                Já tem conta?{' '}
+                <Link to="/login" className="font-semibold no-underline">
+                  Entrar
+                </Link>
+              </>
+            )}
+          </p>
+        </form>
+      </div>
+    </div>
   )
 }

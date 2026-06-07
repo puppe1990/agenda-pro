@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import {
   LANDING_FOOTER_LINKS,
   WHATSAPP_BUTTONS,
+  getAppBaseUrl,
   getAppUrl,
   getDefaultWhatsAppPhone,
   getLandingMeta,
@@ -11,7 +12,7 @@ import {
 
 export function LandingHeader() {
   const meta = getLandingMeta()
-  const appUrl = import.meta.env.VITE_APP_URL ?? 'http://localhost:3000'
+  const appUrl = getAppBaseUrl()
 
   return (
     <header className="landing-header-sticky">
@@ -110,7 +111,7 @@ export function FloatingWhatsApp() {
 
 export function LandingFooter() {
   const meta = getLandingMeta()
-  const appUrl = import.meta.env.VITE_APP_URL ?? 'http://localhost:3000'
+  const appUrl = getAppBaseUrl()
 
   return (
     <footer className="site-footer landing-footer" role="contentinfo">
@@ -152,14 +153,20 @@ export function LandingFooter() {
               Produto
             </p>
             <nav className="grid gap-2">
-              <a href={`${appUrl}/signup`} className="landing-footer-link">
+              <a
+                href={getAppUrl('/signup', appUrl)}
+                className="landing-footer-link"
+              >
                 Criar conta grátis
               </a>
-              <a href={`${appUrl}/login`} className="landing-footer-link">
+              <a
+                href={getAppUrl('/login', appUrl)}
+                className="landing-footer-link"
+              >
                 Entrar
               </a>
               <a
-                href={`${appUrl}/book/studio-demo`}
+                href={getAppUrl('/book/studio-demo', appUrl)}
                 className="landing-footer-link"
               >
                 Portal de agendamento

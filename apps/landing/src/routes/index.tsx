@@ -15,6 +15,7 @@ import {
   LANDING_STATS,
   LANDING_STEPS,
   LANDING_TESTIMONIALS,
+  getAppBaseUrl,
   getAppUrl,
   getLandingMeta,
 } from '#/lib/landing-content'
@@ -103,7 +104,7 @@ function HeroVisual() {
 }
 
 function LandingPage() {
-  const appUrl = import.meta.env.VITE_APP_URL ?? 'http://localhost:3000'
+  const appUrl = getAppBaseUrl()
   const meta = getLandingMeta()
   const latestPosts = getLatestPosts(getAllBlogPosts(), 3)
 

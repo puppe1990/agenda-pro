@@ -86,8 +86,7 @@ function AgendaPage() {
     return Array.from({ length: 7 }, (_, index) => addDays(start, index))
   }, [anchorDate])
 
-  async function handleCreate(event: React.FormEvent) {
-    event.preventDefault()
+  async function handleCreate() {
     const service = data.services.find((s) => s.id === form.serviceId)
     if (!service) return
     const startsAt = new Date(`${form.date}T${form.time}:00`).toISOString()
@@ -175,7 +174,10 @@ function AgendaPage() {
         </div>
       )}
 
-      <form onSubmit={handleCreate} className="mb-6 grid gap-3 md:grid-cols-2">
+      <form
+        onSubmit={(event) => event.preventDefault()}
+        className="mb-6 grid gap-3 md:grid-cols-2"
+      >
         <select
           className="rounded-xl border px-3 py-2"
           value={form.clientId}
@@ -230,8 +232,9 @@ function AgendaPage() {
           required
         />
         <button
-          type="submit"
+          type="button"
           className="rounded-xl bg-[var(--lagoon-deep)] px-4 py-2 font-semibold text-white"
+          onClick={() => void handleCreate()}
         >
           Agendar
         </button>

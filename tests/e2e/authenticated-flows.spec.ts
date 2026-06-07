@@ -1,66 +1,74 @@
 import { expect, test } from '@playwright/test'
 
+import { signInWithApi, waitForAppReady } from './helpers'
+
 const E2E_EMAIL = 'e2e-fixed@gmail.com'
 const E2E_PASSWORD = 'SenhaE2E-123'
 
-function tomorrowDate() {
-  const date = new Date()
-  date.setDate(date.getDate() + 1)
-  return date.toISOString().slice(0, 10)
+function localDateString(date = new Date()) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 test.describe('authenticated flows', () => {
-  test.skip('session login, onboarding, client search and appointment', async ({
+  test('login, client search and appointment', async ({
     page,
     request,
     baseURL,
   }) => {
     const clientName = `Cliente E2E ${Date.now()}`
 
-    const login = await request.post(`${baseURL}/api/auth/sign-in/email`, {
-      data: {
-        email: E2E_EMAIL,
-        password: E2E_PASSWORD,
-      },
-    })
-    expect(login.ok()).toBeTruthy()
-
+    await signInWithApi(baseURL!, request, page, E2E_EMAIL, E2E_PASSWORD)
     await page.goto('/app/dashboard')
-    await expect(page.getByRole('heading', { name: /Dashboard/i })).toBeVisible(
-      {
-        timeout: 15_000,
-      },
-    )
-
-    await page.goto('/onboarding')
-    await page.getByPlaceholder('Ex: Studio Bella').fill('Studio E2E')
-    await page.getByRole('button', { name: 'Continuar' }).click()
-    await page.waitForURL('**/app/dashboard', { timeout: 15_000 })
+    await waitForAppReady(page)
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
 
     await page.goto('/app/servicos')
+    await waitForAppReady(page)
     await page.getByPlaceholder('Nome do serviço').fill('Consulta E2E')
     await page.getByRole('button', { name: 'Adicionar serviço' }).click()
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByText('Consulta E2E')).toBeVisible()
 
     await page.goto('/app/clientes')
-    await page.getByPlaceholder('Nome').fill(clientName)
-    await page.getByPlaceholder('Telefone').fill('11988887777')
+    await waitForAppReady(page)
+    await page
+      .getByRole('textbox', { name: 'Nome', exact: true })
+      .fill(clientName)
+    await page
+      .getByRole('textbox', { name: 'Telefone', exact: true })
+      .fill('11988887777')
     await page.getByRole('button', { name: 'Salvar cliente' }).click()
-    await page.waitForLoadState('networkidle')
+    await expect(page.getByText(clientName)).toBeVisible()
 
     await page.getByPlaceholder('Buscar por nome ou telefone').fill(clientName)
     await expect(page.getByText(clientName)).toBeVisible()
 
     await page.goto('/app/agenda')
+    await waitForAppReady(page)
+    const appointmentDate = localDateString()
     await page.locator('select').nth(0).selectOption({ label: clientName })
-    await page.locator('select').nth(1).selectOption({ index: 1 })
-    await page.locator('select').nth(2).selectOption({ index: 1 })
-    await page.locator('input[type="date"]').last().fill(tomorrowDate())
-    await page.locator('input[type="time"]').fill('10:00')
+    await page.locator('select').nth(1).selectOption({ label: 'Consulta E2E' })
+    await page
+      .locator('select')
+      .nth(2)
+      .selectOption({ label: 'E2E Profissional' })
+    await page.locator('form input[type="date"]').fill(appointmentDate)
+    await page.locator('form input[type="time"]').fill('10:00')
+    await expect(page.locator('form input[type="date"]')).toHaveValue(
+      appointmentDate,
+    )
+    await expect(page.locator('select').nth(0)).not.toHaveValue('')
+    await expect(page.locator('select').nth(1)).not.toHaveValue('')
+    await expect(page.locator('select').nth(2)).not.toHaveValue('')
     await page.getByRole('button', { name: 'Agendar' }).click()
-    await page.waitForLoadState('networkidle')
-
-    await expect(page.getByText(clientName)).toBeVisible()
-    await expect(page.getByText('scheduled')).toBeVisible()
+    await page.waitForLoadState('load')
+    await waitForAppReady(page)
+    const appointment = page.locator('ul.space-y-3 > li').filter({
+      hasText: clientName,
+    })
+    await expect(appointment).toBeVisible()
+    await expect(appointment).toContainText('scheduled')
   })
 })

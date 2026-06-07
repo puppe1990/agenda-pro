@@ -36,6 +36,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   useEffect(() => {
+    document.documentElement.dataset.e2eReady = 'true'
     registerServiceWorker()
   }, [])
 

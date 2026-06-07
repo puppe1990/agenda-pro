@@ -371,9 +371,6 @@ function AgendaPage() {
                           >
                             {status.label}
                           </span>
-                          <span className="text-[0.65rem] text-[var(--sea-ink-soft)]">
-                            {item.status}
-                          </span>
                         </div>
                         <p className="flex items-center gap-1.5 font-semibold text-[var(--sea-ink)]">
                           <User

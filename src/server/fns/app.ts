@@ -548,6 +548,17 @@ export const listAnamnesisRecordsFn = createServerFn({ method: 'GET' })
     })
   })
 
+export const listRecentAnamnesisRecordsFn = createServerFn({
+  method: 'GET',
+}).handler(async () => {
+  const ctx = await tenantFromContext()
+  return db.query.anamnesisRecords.findMany({
+    where: eq(anamnesisRecords.organizationId, ctx.organizationId),
+    orderBy: [desc(anamnesisRecords.recordedAt)],
+    limit: 50,
+  })
+})
+
 export const addClientNoteFn = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({ clientId: z.string(), content: z.string().min(1) }),

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { Eye, EyeOff, Lock } from 'lucide-react'
 import { useState } from 'react'
 
 import { authClient } from '#/lib/auth-client'
@@ -9,6 +10,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [organizationName, setOrganizationName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -98,16 +100,30 @@ export function AuthForm({ mode }: { mode: Mode }) {
           </label>
           <label className="mb-4">
             Senha
-            <input
-              type="password"
-              className="mt-1.5"
-              autoComplete={
-                mode === 'login' ? 'current-password' : 'new-password'
-              }
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative mt-1.5">
+              <Lock
+                size={16}
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sea-ink-soft)]"
+              />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="!pl-9 !pr-10"
+                autoComplete={
+                  mode === 'login' ? 'current-password' : 'new-password'
+                }
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--sea-ink-soft)] transition-colors hover:text-[var(--sea-ink)]"
+                onClick={() => setShowPassword((current) => !current)}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </label>
           {error && (
             <p className="demo-alert demo-alert-danger mb-4 text-sm">{error}</p>

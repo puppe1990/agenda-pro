@@ -1,19 +1,22 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - nvm use 22
-        - corepack enable
-        - pnpm install --frozen-lockfile
-    build:
-      commands:
-        - pnpm --filter @agenda-pro/app db:push
-        - pnpm --filter @agenda-pro/app build
-  artifacts:
-    baseDirectory: apps/app/.amplify-hosting
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+applications:
+  - appRoot: apps/app
+    frontend:
+      buildPath: /
+      phases:
+        preBuild:
+          commands:
+            - nvm use 22
+            - corepack enable
+            - pnpm install --frozen-lockfile
+        build:
+          commands:
+            - pnpm --filter @agenda-pro/app db:push
+            - pnpm --filter @agenda-pro/app build
+      artifacts:
+        baseDirectory: apps/app/.amplify-hosting
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*

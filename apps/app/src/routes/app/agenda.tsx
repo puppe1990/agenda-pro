@@ -354,9 +354,16 @@ function AgendaPage() {
                 return (
                   <li
                     key={item.id}
-                    className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4 shadow-sm"
+                    className="rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm"
                   >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
+                    {service?.imageUrl && (
+                      <img
+                        src={service.imageUrl}
+                        alt={service.name}
+                        className="h-24 w-full rounded-t-xl object-cover"
+                      />
+                    )}
+                    <div className="flex flex-wrap items-start justify-between gap-3 p-4">
                       <div className="min-w-0 flex-1">
                         <div className="mb-2 flex flex-wrap items-center gap-2">
                           <span className="inline-flex items-center gap-1 rounded-lg bg-[var(--chip-bg)] px-2 py-1 text-xs font-bold text-[var(--sea-ink)]">
@@ -490,6 +497,18 @@ function AgendaPage() {
                     </option>
                   ))}
                 </select>
+                {(() => {
+                  const selected = data.services.find(
+                    (s) => s.id === form.serviceId,
+                  )
+                  return selected?.imageUrl ? (
+                    <img
+                      src={selected.imageUrl}
+                      alt={selected.name}
+                      className="mt-2 h-20 w-full rounded-lg object-cover"
+                    />
+                  ) : null
+                })()}
               </Field>
               <Field label="Profissional">
                 <select

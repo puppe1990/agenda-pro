@@ -27,6 +27,7 @@ export const services = sqliteTable('services', {
   durationMinutes: integer('duration_minutes').notNull().default(30),
   priceCents: integer('price_cents').notNull().default(0),
   active: integer('active', { mode: 'boolean' }).notNull().default(true),
+  imageKey: text('image_key'),
   ...timestamps,
 })
 

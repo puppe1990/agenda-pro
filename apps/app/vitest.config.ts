@@ -11,6 +11,8 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     env: {
       TURSO_DATABASE_URL: 'file:tests-vitest.db',
+      S3_REGION: process.env.S3_REGION ?? 'sa-east-1',
+      S3_BUCKET: process.env.S3_BUCKET ?? 'gestao-bem-uploads',
     },
   },
   resolve: {

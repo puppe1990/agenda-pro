@@ -8,6 +8,15 @@ import { assertPublicBookingRateLimit, resolveClientIp } from '#/lib/rate-limit'
 import { captureException } from '#/lib/observability'
 import { db } from '#/server/db/client'
 import {
+  extFromContentType,
+  getPresignedDownloadUrl,
+  getPresignedUploadUrl,
+  getPublicUrl,
+  getServiceImageKey,
+  isAllowedImageType,
+} from '#/server/storage'
+import { readStorageEnv } from '#/lib/env'
+import {
   anamnesisForms,
   anamnesisRecords,
   appointments,
@@ -68,10 +77,18 @@ export const ensureOrganizationFn = createServerFn({ method: 'POST' })
 export const listServicesFn = createServerFn({ method: 'GET' }).handler(
   async () => {
     const ctx = await tenantFromContext()
-    return db.query.services.findMany({
+    const rows = await db.query.services.findMany({
       where: eq(services.organizationId, ctx.organizationId),
       orderBy: [desc(services.createdAt)],
     })
+    return Promise.all(
+      rows.map(async (svc) => ({
+        ...svc,
+        imageUrl: svc.imageKey
+          ? await getPresignedDownloadUrl(svc.imageKey)
+          : null,
+      })),
+    )
   },
 )
 
@@ -85,6 +102,7 @@ export const saveServiceFn = createServerFn({ method: 'POST' })
       priceCents: z.number().int().nonnegative(),
       staffProfileId: z.string().optional(),
       active: z.boolean().default(true),
+      imageKey: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
@@ -92,7 +110,16 @@ export const saveServiceFn = createServerFn({ method: 'POST' })
     if (data.id) {
       await db
         .update(services)
-        .set({ ...data, updatedAt: new Date().toISOString() })
+        .set({
+          name: data.name,
+          description: data.description,
+          durationMinutes: data.durationMinutes,
+          priceCents: data.priceCents,
+          staffProfileId: data.staffProfileId,
+          active: data.active,
+          imageKey: data.imageKey,
+          updatedAt: new Date().toISOString(),
+        })
         .where(
           and(
             eq(services.id, data.id),
@@ -111,8 +138,34 @@ export const saveServiceFn = createServerFn({ method: 'POST' })
       priceCents: data.priceCents,
       staffProfileId: data.staffProfileId,
       active: data.active,
+      imageKey: data.imageKey,
     })
     return id
+  })
+
+export const getServiceImageUploadUrlFn = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      serviceId: z.string(),
+      contentType: z.string(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const ctx = await tenantFromContext()
+
+    if (!isAllowedImageType(data.contentType)) {
+      throw new Error(
+        `Tipo de arquivo não permitido: ${data.contentType}. Use JPEG, PNG ou WebP.`,
+      )
+    }
+
+    const env = readStorageEnv()
+    const ext = extFromContentType(data.contentType)
+    const imageKey = getServiceImageKey(ctx.organizationId, data.serviceId, ext)
+    const uploadUrl = await getPresignedUploadUrl(imageKey, data.contentType)
+    const publicUrl = getPublicUrl(imageKey, env.S3_BUCKET, env.S3_REGION)
+
+    return { uploadUrl, imageKey, publicUrl }
   })
 
 export const listClientsFn = createServerFn({ method: 'GET' })
@@ -603,12 +656,20 @@ export const getBookingDataFn = createServerFn({ method: 'GET' })
     })
     if (!org) throw new Error('NOT_FOUND')
 
-    const orgServices = await db.query.services.findMany({
+    const orgServicesRaw = await db.query.services.findMany({
       where: and(
         eq(services.organizationId, org.id),
         eq(services.active, true),
       ),
     })
+    const orgServices = await Promise.all(
+      orgServicesRaw.map(async (svc) => ({
+        ...svc,
+        imageUrl: svc.imageKey
+          ? await getPresignedDownloadUrl(svc.imageKey)
+          : null,
+      })),
+    )
     const staff = await db.query.staffProfiles.findMany({
       where: and(
         eq(staffProfiles.organizationId, org.id),

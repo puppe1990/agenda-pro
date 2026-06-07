@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { createId } from '#/lib/id'
 import { db } from '#/server/db/client'
@@ -9,6 +9,17 @@ import {
   getServiceImageKey,
   isAllowedImageType,
 } from '#/server/storage'
+
+vi.mock('@aws-sdk/s3-request-presigner', () => ({
+  getSignedUrl: vi.fn((_client, command) => {
+    const bucket = 'gestao-bem-uploads'
+    const region = 'sa-east-1'
+    const key = (command as { input: { Key: string } }).input.Key
+    return Promise.resolve(
+      `https://${bucket}.s3.${region}.amazonaws.com/${key}?X-Amz-Signature=fakesig`,
+    )
+  }),
+}))
 
 let orgId: string
 let serviceId: string

@@ -257,6 +257,7 @@ function ServiceForm({
     existingImageUrl ?? null,
   )
   const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -264,17 +265,20 @@ function ServiceForm({
     if (!file) return
     setImageFile(file)
     setImagePreview(URL.createObjectURL(file))
+    setUploadError(null)
   }
 
   function clearImage() {
     setImageFile(null)
     setImagePreview(null)
+    setUploadError(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setUploading(true)
+    setUploadError(null)
     try {
       let imageKey: string | undefined
 
@@ -283,11 +287,17 @@ function ServiceForm({
         const { uploadUrl, imageKey: key } = await getUploadUrl({
           data: { serviceId: id, contentType: imageFile.type },
         })
-        await fetch(uploadUrl, {
+        const putRes = await fetch(uploadUrl, {
           method: 'PUT',
           body: imageFile,
           headers: { 'Content-Type': imageFile.type },
         })
+        if (!putRes.ok) {
+          const body = await putRes.text().catch(() => '')
+          throw new Error(
+            `Upload falhou (${putRes.status}): ${body.slice(0, 200)}`,
+          )
+        }
         imageKey = key
       }
 
@@ -304,6 +314,10 @@ function ServiceForm({
       } else {
         window.location.reload()
       }
+    } catch (err) {
+      setUploadError(
+        err instanceof Error ? err.message : 'Erro desconhecido ao salvar.',
+      )
     } finally {
       setUploading(false)
     }
@@ -408,6 +422,15 @@ function ServiceForm({
           )}
         </div>
       </div>
+
+      {uploadError && (
+        <p
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800"
+        >
+          {uploadError}
+        </p>
+      )}
 
       <button
         type="submit"

@@ -52,12 +52,12 @@ export function getS3Client(): S3Client {
   if (!_s3Client) {
     const env = readStorageEnv()
     const config: ConstructorParameters<typeof S3Client>[0] = {
-      region: env.AWS_REGION,
+      region: env.S3_REGION,
     }
-    if (env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY) {
+    if (env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY) {
       config.credentials = {
-        accessKeyId: env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+        accessKeyId: env.S3_ACCESS_KEY_ID,
+        secretAccessKey: env.S3_SECRET_ACCESS_KEY,
       }
     }
     _s3Client = new S3Client(config)
@@ -72,7 +72,7 @@ export async function getPresignedUploadUrl(
   const env = readStorageEnv()
   const client = getS3Client()
   const command = new PutObjectCommand({
-    Bucket: env.AWS_S3_BUCKET,
+    Bucket: env.S3_BUCKET,
     Key: key,
     ContentType: contentType,
   })
@@ -83,7 +83,7 @@ export async function getPresignedDownloadUrl(key: string): Promise<string> {
   const env = readStorageEnv()
   const client = getS3Client()
   const command = new GetObjectCommand({
-    Bucket: env.AWS_S3_BUCKET,
+    Bucket: env.S3_BUCKET,
     Key: key,
   })
   return getSignedUrl(client, command, { expiresIn: 86400 })

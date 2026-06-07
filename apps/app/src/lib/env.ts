@@ -10,10 +10,10 @@ const envSchema = z.object({
 })
 
 const storageEnvSchema = z.object({
-  AWS_REGION: z.string().default('sa-east-1'),
-  AWS_ACCESS_KEY_ID: z.string().default(''),
-  AWS_SECRET_ACCESS_KEY: z.string().default(''),
-  AWS_S3_BUCKET: z.string().default('gestao-bem-uploads'),
+  S3_REGION: z.string().default('sa-east-1'),
+  S3_ACCESS_KEY_ID: z.string().default(''),
+  S3_SECRET_ACCESS_KEY: z.string().default(''),
+  S3_BUCKET: z.string().default('gestao-bem-uploads'),
 })
 
 export function readEnv() {

@@ -163,7 +163,7 @@ export const getServiceImageUploadUrlFn = createServerFn({ method: 'POST' })
     const ext = extFromContentType(data.contentType)
     const imageKey = getServiceImageKey(ctx.organizationId, data.serviceId, ext)
     const uploadUrl = await getPresignedUploadUrl(imageKey, data.contentType)
-    const publicUrl = getPublicUrl(imageKey, env.AWS_S3_BUCKET, env.AWS_REGION)
+    const publicUrl = getPublicUrl(imageKey, env.S3_BUCKET, env.S3_REGION)
 
     return { uploadUrl, imageKey, publicUrl }
   })

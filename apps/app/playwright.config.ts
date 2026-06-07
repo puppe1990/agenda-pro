@@ -22,9 +22,10 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `./node_modules/.bin/tsx scripts/e2e-bootstrap.ts && ./node_modules/.bin/vite dev --port ${e2ePort}`,
+    command: `./node_modules/.bin/tsx scripts/e2e-bootstrap.ts && ./node_modules/.bin/vite dev --port ${e2ePort} --strictPort`,
     url: e2eBaseUrl,
     reuseExistingServer: false,
+    timeout: process.env.CI ? 120_000 : 60_000,
     env: {
       TURSO_DATABASE_URL: e2eDatabaseUrl,
       BETTER_AUTH_SECRET:

@@ -16,9 +16,10 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `./node_modules/.bin/vite dev --port ${landingPort}`,
+    command: `./node_modules/.bin/vite dev --port ${landingPort} --strictPort`,
     url: landingBaseUrl,
     reuseExistingServer: false,
+    timeout: process.env.CI ? 120_000 : 60_000,
     env: {
       VITE_APP_URL: 'http://localhost:3000',
     },

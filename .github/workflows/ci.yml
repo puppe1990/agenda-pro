@@ -36,7 +36,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @agenda-pro/app exec playwright install --with-deps chromium
       - run: pnpm --filter @agenda-pro/app build
       - run: pnpm --filter @agenda-pro/app test:e2e
         env:
@@ -55,6 +55,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @agenda-pro/landing exec playwright install --with-deps chromium
       - run: pnpm --filter @agenda-pro/landing build
       - run: pnpm --filter @agenda-pro/landing test:e2e

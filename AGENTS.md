@@ -109,7 +109,7 @@ Node **22** e pnpm **11.5.1** (ver `packageManager` na raiz).
 - App: AWS Amplify via `amplify.yml` (build em `apps/app`, artefatos em `.amplify-hosting`).
 - Build de produção roda `db:push` antes do `vite build`.
 - `BETTER_AUTH_URL` deve ser a URL pública final do app.
-- Landing: deploy separado; configure `VITE_APP_URL` para o domínio do app.
+- Landing: AWS Amplify Hosting (`amplify.yml`, `appRoot: apps/landing`); configure `VITE_APP_URL` para o domínio do app. Deploy manual: `scripts/deploy-landing-amplify.sh`.
 
 ## O que evitar
 

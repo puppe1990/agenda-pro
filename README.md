@@ -47,17 +47,18 @@ packages/
 
 ## Stack
 
-| Camada          | Tecnologia                                  |
-| --------------- | ------------------------------------------- |
-| Framework       | TanStack Start + React 19 + TanStack Router |
-| Banco           | Drizzle ORM + Turso (libSQL)                |
-| Auth            | Better Auth + adapter Drizzle               |
-| Estilo          | Tailwind CSS 4 + `@agenda-pro/theme`        |
-| Validação       | Zod                                         |
-| Testes          | Vitest + Playwright                         |
-| Qualidade       | ESLint + Prettier + Husky + lint-staged     |
-| Deploy app      | AWS Amplify Hosting (`amplify.yml`)         |
-| Observabilidade | Sentry (opcional)                           |
+| Camada          | Tecnologia                                          |
+| --------------- | --------------------------------------------------- |
+| Framework       | TanStack Start + React 19 + TanStack Router         |
+| Banco           | Drizzle ORM + Turso (libSQL)                        |
+| Auth            | Better Auth + adapter Drizzle                       |
+| Estilo          | Tailwind CSS 4 + `@agenda-pro/theme`                |
+| Validação       | Zod                                                 |
+| Testes          | Vitest + Playwright                                 |
+| Qualidade       | ESLint + Prettier + Husky + lint-staged             |
+| Deploy app      | AWS Amplify Hosting (`amplify.yml`, `apps/app`)     |
+| Deploy landing  | AWS Amplify Hosting (`amplify.yml`, `apps/landing`) |
+| Observabilidade | Sentry (opcional)                                   |
 
 ## Pré-requisitos
 
@@ -158,7 +159,13 @@ A landing mantém TDD em `apps/landing/tests/unit/` para conteúdo, CTAs e URLs.
 3. Configure as variáveis de `apps/app/.env.example` (incluindo `BETTER_AUTH_URL` com a URL pública do app).
 4. O build executa `db:push` antes do `build` para sincronizar o schema.
 5. Artefatos saem de `apps/app/.amplify-hosting`.
-6. A landing pode ser publicada separadamente (Amplify, Netlify ou host estático) com `VITE_APP_URL` apontando para o app.
+6. A landing usa um app Amplify separado (`AMPLIFY_MONOREPO_APP_ROOT=apps/landing`) com `VITE_APP_URL`, `VITE_LANDING_URL` e `VITE_WHATSAPP_PHONE`.
+7. Deploy manual da landing via AWS CLI:
+
+```bash
+chmod +x scripts/deploy-landing-amplify.sh
+AMPLIFY_LANDING_APP_ID=<app-id> ./scripts/deploy-landing-amplify.sh
+```
 
 ## Convenções
 

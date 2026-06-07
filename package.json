@@ -21,6 +21,7 @@
     "db:migrate": "pnpm --filter @agenda-pro/app db:migrate",
     "db:push": "pnpm --filter @agenda-pro/app db:push",
     "db:seed": "pnpm --filter @agenda-pro/app db:seed",
+    "deploy:landing": "scripts/deploy-landing-amplify.sh",
     "prepare": "husky"
   },
   "devDependencies": {
